@@ -21,4 +21,4 @@ local function submitContactForm( len, ply )
     submitForm( data, 'contact' )
 end
 
-net_receive( 'CFC_SubmitContactForm', submitContactForm )
+net.Receive( 'CFC_SubmitContactForm', submitContactForm )
