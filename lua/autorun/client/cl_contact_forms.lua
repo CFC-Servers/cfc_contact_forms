@@ -1,4 +1,5 @@
 local LEFT_BORDER = 10
+local Frame = nil
 
 local function makeFormButton(text, pos, callback, parent)
     local Button = vgui.Create( "DButton", parent )
@@ -131,7 +132,7 @@ local function openPlayerReportForm()
 end
 
 local function openForms()
-    local Frame = vgui.Create( "DFrame" )
+    Frame = vgui.Create( "DFrame" )
     Frame:SetTitle( "Contact Forms" )
     Frame:SetSize( 300, 300 )
     Frame:Center()
