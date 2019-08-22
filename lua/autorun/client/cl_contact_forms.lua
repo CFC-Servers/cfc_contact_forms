@@ -225,7 +225,7 @@ local function openBugReportForm()
     urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this bug?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
-    table.insert( questions, rating )
+    table.insert( questions, urgency )
 
     local message = {}
     message.query = "Please describe the bug in detail. Please tell us how we can re-create the issue."
@@ -249,7 +249,7 @@ local function openPlayerReportForm()
     reportedPlayer.query = "Please select the player you wish to report"
     reportedPlayer.name = "reportedPlayer"
     reportedPlayer.fieldType = "player-dropdown"
-    table.insert( questions, rating )
+    table.insert( questions, reportedPlayer )
 
     local urgency = {}
     urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this situation?"
