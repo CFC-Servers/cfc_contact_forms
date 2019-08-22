@@ -45,7 +45,7 @@ local function makeTextField( question, parent )
     local query = question.query
 
     local TextField = parent:TextEntry( query )
-    TextField:SetHeight( TextField:GetHeight() * 3 )
+    TextField:SetHeight( 200 )
 
     return TextField
 end
