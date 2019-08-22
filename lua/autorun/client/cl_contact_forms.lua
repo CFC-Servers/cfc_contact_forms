@@ -34,7 +34,8 @@ local function processFieldsForForm( fields, formData )
     local netstring = FORM_TYPE_TO_NETSTRING[formType]
 
     net.Start( netstring )
-        for _, field in pairs( fields ) do
+        for _, fieldStruct in pairs( fields ) do
+            local field = fieldStruct.field
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()
@@ -71,7 +72,11 @@ local function openForm( formData )
 
         ycounter = ycounter + 60
 
-        fields[question.name] = field
+        local fieldStruct = {}
+        fieldStruct.name = question.name
+        fieldStruct.field = field
+
+        table.insert( fields, fieldStruct )
     end
 
     local Submit = vgui.Create( "DButton", Form )
