@@ -14,7 +14,7 @@ local function submitContactForm( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam-id'] = ply:SteamId()
+    data['steam_id'] = ply:SteamID()
     data['contact_method'] = contactMethod
     data['message'] = message
 
