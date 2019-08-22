@@ -95,7 +95,9 @@ local function makeSlidingScaleField( question, parent )
     return NumSlider
 end
 
-local function makeFormField( question, parent )
+local function makeFormField( ... )
+    local args = { ... }
+    local question = args[1]
     local fieldType = question.fieldType
 
     if fieldType == "text" then
