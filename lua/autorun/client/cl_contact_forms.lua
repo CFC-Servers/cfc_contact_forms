@@ -116,7 +116,7 @@ local function makeFormField( ... )
         return makeSlidingScaleField( ... )
     end
 
-    if fieldType = "rating" then
+    if fieldType == "rating" then
         return makeSlidingScaleField( ... )
     end
 
