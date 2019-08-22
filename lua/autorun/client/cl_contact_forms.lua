@@ -39,38 +39,108 @@ local function processFieldsForForm( fields, formData )
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()
+end
 
+local function makeTextField( question, parent )
+    local query = question.query
+
+    local TextField = parent:TextEntry( query )
+    TextField:SetHeight( TextField:GetHeight() * 3 )
+
+    return TextField
+end
+
+local function makeBooleanField( question, parent )
+    local query = question.query
+
+    local ComboBox = parent:ComboBox( query )
+    ComboBox:AddChoice( "Yes", "yes" )
+    ComboBox:AddChoice( "No", "no" )
+    ComboBox.GetValue = function()
+        local _, data = ComboBox:GetSelected()
+
+        return data
+    end
+
+    return ComboBox
+end
+
+local function makePlayerDropdownField( question, parent )
+    local query = question.query
+
+    local ComboBox = parent:ComboBox( query )
+
+    for _, ply in pairs( player.GetAll() ) do
+        ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
+    end
+
+    ComboBox.GetValue = function()
+        local _, data = ComboBox:GetSelected()
+
+        return data
+    end
+
+    return ComboBox
+end
+
+local function makeSlidingScaleField( question, parent )
+    local query = question.query
+
+    local min = 1
+    local max = 5
+    local precision = 0
+
+    local NumSlider = parent:NumSlider( query, nil, min, max, precision)
+
+    return NumSlider
+end
+
+local function makeFormField( question, parent )
+    local fieldType = question.fieldType
+
+    if fieldType == "text" then
+        return makeTextField( ... )
+    end
+
+    if fieldType == "boolean" then
+        return makeBooleanField( ... )
+    end
+
+    if fieldType == "player-dropdown" then
+        return makePlayerDropdownField( ... )
+    end
+
+    if fieldType == "urgency" then
+        return makeSlidingScaleField( ... )
+    end
+
+    if fieldType = "rating" then
+        return makeSlidingScaleField( ... )
+    end
+
+    print( "Not sure what to do with this field type! :" .. fieldType )
 end
 
 local function openForm( formData )
     Frame:Close()
 
-    local Form = vgui.Create( "DFrame" )
-    Form:SetTitle( formData.title )
-    Form:SetSize( 600, 600 )
-    Form:Center()
-    Form:MakePopup()
+    local containerWidth = 600
+    local containerHeight = 600
 
-    local baseHeight = 30
+    local FormContainer = vgui.Create( "DFrame" )
+    FormContainer:SetTitle( formData.title )
+    FormContainer:SetSize( containerWidth, containerHeight )
+    FormContainer:Center()
+    FormContainer:MakePopup()
+
+    local Form = vgui.Create( "DForm", FormContainer )
+    Form:DockMargin( 30, 30, 30, 30 )
+    Form:SetSize( containerWidth, containerHeight  )
 
     local fields = {}
 
-    local ycounter = baseHeight
-
     for i, question in pairs( formData.questions ) do
-        local query = question.query
-        local fieldType = question.fieldType
-
-        local label = vgui.Create( "DLabel", Form )
-        label:SetPos( LEFT_BORDER, ycounter )
-        label:SetSize( Form:GetSize() * 0.95, 15 )
-        label:SetText( query )
-
-        local field = vgui.Create( "DTextEntry", Form )
-        field:SetPos( LEFT_BORDER, ycounter + 15 )
-        field:SetSize( Form:GetSize() * 0.95, 35 )
-
-        ycounter = ycounter + 60
+        local field = makeFormField( question, Form )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
@@ -79,12 +149,13 @@ local function openForm( formData )
         table.insert( fields, fieldStruct )
     end
 
-    local Submit = vgui.Create( "DButton", Form )
-    Submit:SetText( "Submit" )
-    Submit:SetPos( LEFT_BORDER, ycounter )
+    local Submit = Form:Button( "Submit" )
 
     Submit.DoClick = function()
-        local result = processFieldsForForm( fields, formData )
+        processFieldsForForm( fields, formData )
+        LocalPlayer():ChatPrint("Thanks for your form submission!")
+
+        FormContainer:Close()
     end
 end
 
@@ -117,6 +188,27 @@ local function openFeedbackForm()
     formData.title = "Feedback Form"
     formData.formType = "feedback"
 
+    local questions = {}
+
+    local rating = {}
+    rating.query = "From 1 - 5, 1 being 'Terrible', and 5 being 'Terrific', how would you rate our server?"
+    rating.name = "rating"
+    rating.fieldType = "rating"
+    table.insert( questions, rating )
+
+    local likelyToReturn = {}
+    likelyToReturn.query = "Based on your experiences so far, are you likely to visit our server again within the next two weeks?"
+    likelyToReturn.name = "likely_to_return"
+    rating.fieldType = "boolean"
+
+    local message = {}
+    message.query = "What would you like to say?"
+    message.name = "message"
+    message.fieldType = "text"
+    table.insert( questions, message )
+
+    formData.questions = questions
+
     openForm( formData )
 end
 
@@ -125,6 +217,22 @@ local function openBugReportForm()
     formData.title = "Bug Report Form"
     formData.formType = "bug-report"
 
+    local questions = {}
+
+    local urgency = {}
+    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this bug?"
+    urgency.name = "urgency"
+    urgency.fieldType = "urgency"
+    table.insert( questions, rating )
+
+    local message = {}
+    message.query = "Please describe the bug in detail. Please tell us how we can re-create the issue."
+    message.name = "message"
+    message.fieldType = "text"
+    table.insert( questions, message )
+
+    formData.questions = questions
+
     openForm( formData )
 end
 
@@ -132,6 +240,28 @@ local function openPlayerReportForm()
     local formData = {}
     formData.title = "Player Report Form"
     formData.formType = "player-report"
+
+    local questions = {}
+
+    local reportedPlayer = {}
+    reportedPlayer.query = "Please select the player you wish to report"
+    reportedPlayer.name = "reportedPlayer"
+    reportedPlayer.fieldType = "player-dropdown"
+    table.insert( questions, rating )
+
+    local urgency = {}
+    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this situation?"
+    urgency.name = "urgency"
+    urgency.fieldType = "urgency"
+    table.insert( questions, rating )
+
+    local message = {}
+    message.query = "Please describe the situation in detail. If you've gathered some, please share links containing evidence of wrongdoing."
+    message.name = "message"
+    message.fieldType = "text"
+    table.insert( questions, message )
+
+    formData.questions = questions
 
     openForm( formData )
 end
