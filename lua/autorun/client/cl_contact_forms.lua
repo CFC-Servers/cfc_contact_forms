@@ -125,7 +125,7 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 600
+    local containerWidth = 1200
     local containerHeight = 600
 
     local FormContainer = vgui.Create( "DFrame" )
@@ -136,7 +136,10 @@ local function openForm( formData )
 
     local Form = vgui.Create( "DForm", FormContainer )
     Form:DockMargin( 30, 30, 30, 30 )
+    Form:DockPadding( 30, 30, 30, 30 )
     Form:SetSize( containerWidth, containerHeight  )
+    Form:Center()
+    Form:SetPos( 0, 30  )
 
     local fields = {}
 
