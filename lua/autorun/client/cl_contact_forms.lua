@@ -277,7 +277,7 @@ local function openPlayerReportForm()
     urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this situation?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
-    table.insert( questions, rating )
+    table.insert( questions, urgency )
 
     local message = {}
     message.query = "Please describe the situation in detail. If you've gathered some, please share links containing evidence of wrongdoing."
