@@ -168,7 +168,7 @@ local function openForm( formData )
     SubmitButton:SetText( "Submit" )
     SubmitButton:Dock( TOP )
 
-    Submit.DoClick = function()
+    SubmitButton.DoClick = function()
         processFieldsForForm( fields, formData )
         LocalPlayer():ChatPrint("Thanks for your form submission!")
 
