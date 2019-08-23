@@ -164,7 +164,9 @@ local function openForm( formData )
         table.insert( fields, fieldStruct )
     end
 
-    local Submit = Form:Button( "Submit" )
+    local SubmitButton = vgui.Create( "DButton", Form )
+    SubmitButton:SetText( "Submit" )
+    SubmitButton:Dock( TOP )
 
     Submit.DoClick = function()
         processFieldsForForm( fields, formData )
