@@ -166,7 +166,7 @@ local function openForm( formData )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
-        fieldStruct.Field = Field
+        fieldStruct.field = Field
 
         table.insert( fields, fieldStruct )
     end
