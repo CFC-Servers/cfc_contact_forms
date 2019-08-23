@@ -41,10 +41,19 @@ local function processFieldsForForm( fields, formData )
     net.SendToServer()
 end
 
+local function makeLabel( text, parent )
+    local Label = vgui.Create( "DLabel", parent )
+    Label:SetText( text )
+    Label:Dock( TOP )
+
+    return Label
+end
+
 local function makeTextField( question, parent )
     local query = question.query
 
-    local TextField = parent:TextEntry( query )
+    local TextField = vgui.Create( "DTextEntry", parent )
+    TextField:Dock( TOP )
 
     return TextField
 end
@@ -52,7 +61,8 @@ end
 local function makeBooleanField( question, parent )
     local query = question.query
 
-    local ComboBox = parent:ComboBox( query )
+    local ComboBox = vgui.Create( "DComboBox", parent )
+    ComboBox:Dock( TOP )
     ComboBox:AddChoice( "Yes", "yes" )
     ComboBox:AddChoice( "No", "no" )
     ComboBox.GetValue = function()
@@ -67,7 +77,8 @@ end
 local function makePlayerDropdownField( question, parent )
     local query = question.query
 
-    local ComboBox = parent:ComboBox( query )
+    local ComboBox = vgui.Create( "DComboBox", parent )
+    ComboBox:Dock( TOP )
 
     for _, ply in pairs( player.GetAll() ) do
         ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
@@ -75,7 +86,6 @@ local function makePlayerDropdownField( question, parent )
 
     ComboBox.GetValue = function()
         local _, data = ComboBox:GetSelected()
-
         return data
     end
 
@@ -89,7 +99,12 @@ local function makeSlidingScaleField( question, parent )
     local max = 5
     local precision = 0
 
-    local NumSlider = parent:NumSlider( query, nil, min, max, precision)
+    local NumSlider = vgui.Create( "DNumSlider", parent )
+    NumSlider:SetMin( min )
+    NumSlider:SetMax( max )
+    NumSlider:SetDecimals( precision )
+
+    NumSlider:Dock( TOP )
 
     return NumSlider
 end
@@ -134,12 +149,8 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local Form = vgui.Create( "DForm", FormContainer )
-    Form:DockMargin( 30, 30, 30, 30 )
-    Form:DockPadding( 30, 30, 30, 30 )
-    Form:SetSize( containerWidth, containerHeight  )
-    Form:Center()
-    Form:SetPos( 0, 30  )
+    local Form = vgui.Create( "DScrollPanel", FormContainer )
+    Form:Dock( FILL )
 
     local fields = {}
 
