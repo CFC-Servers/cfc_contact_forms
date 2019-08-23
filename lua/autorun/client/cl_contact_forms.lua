@@ -44,13 +44,16 @@ end
 local function makeLabel( text, parent )
     local Label = vgui.Create( "DLabel", parent )
     Label:SetText( text )
-    Label:Dock( TOP )
 
-    return Label
+    Label:Dock( TOP )
+    Label:DockMargin( 0, 0, 0, 10 )
+    Label:SetWrap( true)
+    Label:SetAutoStretchVertical( true )
 end
 
 local function makeTextField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
     local TextField = vgui.Create( "DTextEntry", parent )
     TextField:Dock( TOP )
@@ -60,6 +63,7 @@ end
 
 local function makeBooleanField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
     local ComboBox = vgui.Create( "DComboBox", parent )
     ComboBox:Dock( TOP )
@@ -76,6 +80,7 @@ end
 
 local function makePlayerDropdownField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
     local ComboBox = vgui.Create( "DComboBox", parent )
     ComboBox:Dock( TOP )
@@ -94,6 +99,7 @@ end
 
 local function makeSlidingScaleField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
     local min = 1
     local max = 5
@@ -155,11 +161,12 @@ local function openForm( formData )
     local fields = {}
 
     for i, question in pairs( formData.questions ) do
-        local field = makeFormField( question, Form )
+        local Field = makeFormField( question, Form )
+        Field:DockMargin( 0, 0, 0, 15 )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
-        fieldStruct.field = field
+        fieldStruct.Field = Field
 
         table.insert( fields, fieldStruct )
     end
