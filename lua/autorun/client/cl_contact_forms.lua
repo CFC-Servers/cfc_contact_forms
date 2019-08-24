@@ -206,7 +206,7 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local paddingLeft = ( containerWidth * 0.5 ) / 2
+    local paddingLeft = ( containerWidth * 0.2 ) / 2
     local paddingRight = paddingLeft
 
     local paddingTop = ( containerHeight * 0.2 ) / 2
