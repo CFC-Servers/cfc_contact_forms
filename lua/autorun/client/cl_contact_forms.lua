@@ -57,6 +57,7 @@ local function makeLabel( text, parent )
         StagingLabel:SetFontInternal( "Trebuchet24" )
     end
 
+    StagingLabel:SetToFullHeight()
     StagingLabel:SetWrap( true )
 end
 
