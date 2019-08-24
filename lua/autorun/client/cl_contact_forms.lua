@@ -55,13 +55,10 @@ local function makeLabel( text, parent )
 
     function StagingLabel:PerformLayout()
         StagingLabel:SetFontInternal( "Trebuchet24" )
+        StagingLabel:SetToFullHeight()
     end
 
     StagingLabel:SetWrap( true )
-
-    timer.Simple(1, function()
-        StagingLabel:SetToFullHeight()
-    end)
 end
 
 local function makeTextField( question, parent )
