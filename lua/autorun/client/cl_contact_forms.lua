@@ -50,7 +50,6 @@ local function makeLabel( text, parent )
     Label:Dock( TOP )
     Label:DockMargin( 0, 0, 0, 10 )
     Label:SetWrap( true )
-    Label:SetAutoStretchVertical( true )
 end
 
 local function makeTextField( question, parent )
