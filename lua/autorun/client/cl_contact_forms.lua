@@ -99,7 +99,14 @@ local function makePlayerDropdownField( question, parent )
     return ComboBox
 end
 
-local function makeSlidingScaleField( question, parent )
+local function formImage( imageBase, shouldGrayscale )
+    local path = "vgui/cfc/forms/"
+    local grayscale = shouldGrayscale and "_grayscale" or ""
+
+    return path .. imageBase .. grayscale .. ".png"
+end
+
+local function makeSlidingScaleField( question, parent, imageBase )
     local query = question.query
     makeLabel( query, parent )
 
@@ -114,7 +121,7 @@ local function makeSlidingScaleField( question, parent )
 
     for i=1, 5 do
         local Button = vgui.Create( "DImageButton", ButtonPanel )
-        Button:SetImage( "vgui/cfc_forms_fire_grayscale.png" )
+        Button:SetImage( formImage( imageBase, true ) )
         Button:SizeToContents()
         Button:DockMargin( 0, 0, 5, 0 )
         Button:Dock( LEFT )
@@ -126,11 +133,11 @@ local function makeSlidingScaleField( question, parent )
             for x = 1, 5 do
                 local InfantButton = buttons[x]
 
-                local image = "vgui/cfc_forms_fire_grayscale.png"
+                local grayscale = x > i
 
-                if x <= i then
-                    image = "vgui/cfc_forms_fire.png"
-                end
+                local image = formImage( image, grayscale )
+
+                if InfantButton:GetImage() == image then continue end
 
                 InfantButton:SetImage( image )
             end
@@ -138,6 +145,14 @@ local function makeSlidingScaleField( question, parent )
     end
 
     return ButtonPanel
+end
+
+local function makeUrgencyField( question, parent )
+    return makeSlidingScaleField( question, parent, "fire" )
+end
+
+local function makeRatingField( question, parent )
+    return makeSlidingScaleField( question, parent, "star" )
 end
 
 local function makeFormField( ... )
@@ -158,11 +173,11 @@ local function makeFormField( ... )
     end
 
     if fieldType == "urgency" then
-        return makeSlidingScaleField( ... )
+        return makeUrgencyField( ... )
     end
 
     if fieldType == "rating" then
-        return makeSlidingScaleField( ... )
+        return makeRatingField( ... )
     end
 
     print( "Not sure what to do with this field type! :" .. fieldType or "nil" )
