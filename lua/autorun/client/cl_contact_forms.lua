@@ -36,6 +36,8 @@ local function processFieldsForForm( fields, formData )
     net.Start( netstring )
         for _, fieldStruct in pairs( fields ) do
             local field = fieldStruct.field
+
+            print("Sending '" .. fieldStruct.name .. "' to the server..")
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()

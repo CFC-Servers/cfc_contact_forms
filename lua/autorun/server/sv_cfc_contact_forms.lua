@@ -24,7 +24,7 @@ local function submitContactForm( len, ply )
     submitForm( data, 'contact' )
 end
 
-local function submitFeedback( len, ply )
+local function submitFeedbackForm( len, ply )
     local rating = net.ReadString()
     local likelyToReturn = net.ReadString()
     local message = net.ReadString()
