@@ -46,15 +46,12 @@ end
 local function makeLabel( text, parent )
     local StagingLabel = vgui.Create( "RichText", parent )
     StagingLabel:SetVerticalScrollbarEnabled( false )
-    StagingLabel:AppendText( text )
-
+    StagingLabel:SetFont( "Trebuchet24" )
+    StagingLabel:SetText( text )
     StagingLabel:Dock( TOP )
     StagingLabel:DockMargin( 0, 0, 0, 10 )
-    StagingLabel:SetWrap( true )
 
-    function StagingLabel:PerformLayout()
-        self:SetFontInternal( "Trebuchet24" )
-    end
+    StagingLabel:SetWrap( true )
 end
 
 local function makeTextField( question, parent )
@@ -192,7 +189,7 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 1200
+    local containerWidth = 700
     local containerHeight = 600
 
     local FormContainer = vgui.Create( "DFrame" )
@@ -201,10 +198,10 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local paddingLeft = ( containerWidth * 0.3 ) / 2
+    local paddingLeft = ( containerWidth * 0.5 ) / 2
     local paddingRight = paddingLeft
 
-    local paddingTop = ( containerHeight * 0.1 ) / 2
+    local paddingTop = ( containerHeight * 0.2 ) / 2
     local paddingBottom = paddingTop
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
@@ -269,7 +266,7 @@ local function openFeedbackForm()
     local questions = {}
 
     local rating = {}
-    rating.query = "From 1 - 5, 1 being 'Terrible', and 5 being 'Terrific', how would you rate our server?"
+    rating.query = "How would you rate your experience with our server?"
     rating.name = "rating"
     rating.fieldType = "rating"
     table.insert( questions, rating )
@@ -299,7 +296,7 @@ local function openBugReportForm()
     local questions = {}
 
     local urgency = {}
-    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this bug?"
+    urgency.query = "How urgent is this bug?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
     table.insert( questions, urgency )
@@ -329,7 +326,7 @@ local function openPlayerReportForm()
     table.insert( questions, reportedPlayer )
 
     local urgency = {}
-    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this situation?"
+    urgency.query = "How urgent is this situation?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
     table.insert( questions, urgency )
