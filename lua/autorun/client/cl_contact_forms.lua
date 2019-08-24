@@ -4,9 +4,10 @@ local Frame = nil
 local function makeFormButton(text, pos, callback, parent)
     local Button = vgui.Create( "DButton", parent )
 
-    Button:SetText( text )
+    Button:SetFont( "Trebuchet18" )
     Button:SetTextColor( Color( 255, 255, 255 ) )
     Button:SetPos( LEFT_BORDER + pos.x, pos.y )
+    Button:SetText( text )
 
     local parentX = parent:GetSize()
     local desiredSizeX = parentX - ( LEFT_BORDER * 2 )
