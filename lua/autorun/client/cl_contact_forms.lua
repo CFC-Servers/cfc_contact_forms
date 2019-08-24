@@ -112,7 +112,7 @@ local function makeSlidingScaleField( question, parent, imageBase )
 
     local ButtonPanel = vgui.Create( "DPanel", parent )
     ButtonPanel:Dock( TOP )
-    ButtonPanel:SetHeight( 100 )
+    ButtonPanel:SetHeight( 35 )
     ButtonPanel:SetBackgroundColor( Color( 0, 0, 0, 0 ) )
     ButtonPanel.selectedValue = nil
     ButtonPanel.GetValue = function()
