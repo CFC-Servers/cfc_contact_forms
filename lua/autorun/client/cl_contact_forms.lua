@@ -50,10 +50,10 @@ local function makeLabel( text, parent )
     StagingLabel:SetText( text )
     StagingLabel:Dock( TOP )
     StagingLabel:DockMargin( 0, 0, 0, 10 )
+    StagingLabel:SetMultiline( true )
 
     function StagingLabel:PerformLayout()
         StagingLabel:SetFontInternal( "Trebuchet24" )
-        StagingLabel:SetWrap( true )
     end
 
     StagingLabel:SetWrap( true )
@@ -66,6 +66,7 @@ local function makeTextField( question, parent )
     local TextField = vgui.Create( "DTextEntry", parent )
     TextField:Dock( TOP )
     TextField:SetHeight( 200 )
+    TextField:SetMultiline( true )
     TextField:SetWrap( true )
 
     return TextField
