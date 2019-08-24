@@ -44,12 +44,12 @@ local function processFieldsForForm( fields, formData )
 end
 
 local function makeLabel( text, parent )
-    local Label = vgui.Create( "DLabel", parent )
-    Label:SetText( text )
+    local Label = vgui.Create( "RichText", parent )
+    Label:AppendText( text )
 
     Label:Dock( TOP )
     Label:DockMargin( 0, 0, 0, 10 )
-    Label:SetWrap( true)
+    Label:SetWrap( true )
     Label:SetAutoStretchVertical( true )
 end
 
