@@ -52,7 +52,7 @@ local function makeLabel( text, parent )
     StagingLabel:DockMargin( 0, 0, 0, 10 )
 
     function StagingLabel:PerformLayout()
-        StagingLabel:SetFont( "Trebuchet24" )
+        StagingLabel:SetFontInternal( "Trebuchet24" )
     end
 
     StagingLabel:SetWrap( true )
