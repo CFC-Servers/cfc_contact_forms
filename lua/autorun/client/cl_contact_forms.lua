@@ -193,9 +193,17 @@ local function openForm( formData )
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
-    FormContainer:SetSize( containerWidth * 0.75, containerHeight )
+    FormContainer:SetSize( containerWidth, containerHeight )
     FormContainer:Center()
     FormContainer:MakePopup()
+
+    local paddingLeft = ( containerWidth * 0.3 ) / 2
+    local paddingRight = paddingLeft
+
+    local paddingTop = ( containerHeight * 0.1 ) / 2
+    local paddingBottom = paddingTop
+
+    FormContainer:DockPading( paddingLeft, paddingTop, paddingRight, paddingBottom )
 
     local Form = vgui.Create( "DScrollPanel", FormContainer )
     Form:Dock( FILL )
