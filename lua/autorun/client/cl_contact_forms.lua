@@ -246,7 +246,7 @@ local function openFeedbackForm()
     local likelyToReturn = {}
     likelyToReturn.query = "Based on your experiences so far, are you likely to visit our server again within the next two weeks?"
     likelyToReturn.name = "likely_to_return"
-    likelytoReturn.fieldType = "boolean"
+    likelyToReturn.fieldType = "boolean"
     table.insert( questions, likelyToReturn )
 
     local message = {}
