@@ -47,10 +47,13 @@ end
 local function makeLabel( text, parent )
     local StagingLabel = vgui.Create( "RichText", parent )
     StagingLabel:SetVerticalScrollbarEnabled( false )
-    StagingLabel:SetFont( "Trebuchet24" )
     StagingLabel:SetText( text )
     StagingLabel:Dock( TOP )
     StagingLabel:DockMargin( 0, 0, 0, 10 )
+
+    function StagingLabel:PerformLayout()
+        StagingLabel:SetFont( "Trebuchet24" )
+    end
 
     StagingLabel:SetWrap( true )
 end
