@@ -111,6 +111,7 @@ local function makeSlidingScaleField( question, parent )
     for i=1, 5 do
         local Button = vgui.Create( "DImageButton", ButtonPanel )
         Button:Dock( LEFT )
+        Button:SetHeight( 100 )
         Button:SetImage( "vgui/cfc_forms_fire_grayscale.png" )
         Button.DoClick = function()
             ButtonPanel.selectedValue = i
