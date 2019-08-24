@@ -7,9 +7,23 @@ local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
 FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\r", "")
 FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\n", "")
 
+local function serverLog( msg )
+    local prefix = "[CFC Contact Forms] "
+    print( prefix .. msg)
+end
+
 local function submitForm( data, endpoint )
     local url = FORM_PROCESSOR_URL ..  endpoint
-    http.Post( url, data, function( success ) print( success ) end, function( failure ) print( failure ) end )
+    http.Post( url, data,
+        function( success )
+            print( success )
+        end,
+        function( failure )
+            serverLog( "Request failed with data:")
+            PrintTable( data )
+            serverLog( failure )
+        end
+    )
 end
 
 local function submitContactForm( len, ply )
