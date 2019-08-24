@@ -102,6 +102,7 @@ local function makePlayerDropdownField( question, parent )
     ComboBox:Dock( TOP )
 
     for _, ply in pairs( player.GetAll() ) do
+        if ply == LocalPlayer() then continue end
         ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
     end
 
@@ -202,8 +203,8 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 700
-    local containerHeight = 600
+    local containerWidth = 1000
+    local containerHeight = 900
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
@@ -214,7 +215,7 @@ local function openForm( formData )
     local paddingLeft = ( containerWidth * 0.2 ) / 2
     local paddingRight = paddingLeft
 
-    local paddingTop = ( containerHeight * 0.2 ) / 2
+    local paddingTop = ( containerHeight * 0.1 ) / 2
     local paddingBottom = paddingTop
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
