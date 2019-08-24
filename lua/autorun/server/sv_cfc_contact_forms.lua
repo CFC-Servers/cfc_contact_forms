@@ -46,7 +46,7 @@ local function submitFeedbackForm( len, ply )
     local data = {}
     data['steam_id'] = ply:SteamID()
     data['rating'] = rating
-    data['likelyToReturn'] = likelyToReturn
+    data['likely_to_return'] = likelyToReturn
     data['message'] = message
 
     submitForm( data, 'feedback' )
