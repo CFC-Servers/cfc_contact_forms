@@ -87,6 +87,7 @@ local function makeBooleanField( question, parent )
     ComboBox:AddChoice( "No", "no" )
     ComboBox.GetValue = function()
         local _, data = ComboBox:GetSelected()
+        print( _, data )
 
         return data
     end
