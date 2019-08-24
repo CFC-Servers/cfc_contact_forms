@@ -120,9 +120,10 @@ local function makeSlidingScaleField( question, parent, imageBase )
     end
 
     for i=1, 5 do
+        local backupLabel = "Select: " .. i
         local Button = vgui.Create( "DImageButton", ButtonPanel )
-        Button:SetImage( formImage( imageBase, true ) )
-        Button:SizeToContents()
+        Button:SetSize( 60, 60 )
+        Button:SetImage( formImage( imageBase, true ), backupLabel )
         Button:DockMargin( 0, 0, 5, 0 )
         Button:Dock( LEFT )
         Button.DoClick = function()
@@ -131,6 +132,7 @@ local function makeSlidingScaleField( question, parent, imageBase )
             local buttons = ButtonPanel:GetChildren()
 
             for x = 1, 5 do
+                local backupLabel = "Select: " .. x
                 local InfantButton = buttons[x]
 
                 local grayscale = x > i
@@ -139,7 +141,7 @@ local function makeSlidingScaleField( question, parent, imageBase )
 
                 if InfantButton:GetImage() == image then continue end
 
-                InfantButton:SetImage( image )
+                InfantButton:SetImage( image, backupLabel )
             end
         end
     end
