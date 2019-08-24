@@ -101,18 +101,36 @@ local function makeSlidingScaleField( question, parent )
     local query = question.query
     makeLabel( query, parent )
 
-    local min = 1
-    local max = 5
-    local precision = 0
+    local ButtonPanel = vgui.Create( "DPanel", parent )
+    ButtonPanel:Dock( TOP )
+    ButtonPanel.selectedValue = nil
+    ButtonPanel.GetValue = function()
+        return ButtonPanel.selectedValue
+    end
 
-    local NumSlider = vgui.Create( "DNumSlider", parent )
-    NumSlider:SetMin( min )
-    NumSlider:SetMax( max )
-    NumSlider:SetDecimals( precision )
+    for i=1, 5 do
+        local Button = vgui.Create( "DImageButton", ButtonPanel )
+        Button:SetImage( "vgui/cfc_forms_fire_grayscale.png" )
+        Button.DoClick = function()
+            ButtonPanel.selectedValue = i
 
-    NumSlider:Dock( TOP )
+            local buttons = ButtonPanel:GetChildren()
 
-    return NumSlider
+            for x = 1, 5 do
+                local InfantButton = buttons[x]
+
+                local image = "vgui/cfc_forms_fire_grayscale.png"
+
+                if x <= i then
+                    image = "vgui/cfc_forms_fire.png"
+                end
+
+                InfantButton:SetImage( image )
+            end
+        end
+    end
+
+    return ButtonPanel
 end
 
 local function makeFormField( ... )
@@ -151,7 +169,7 @@ local function openForm( formData )
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
-    FormContainer:SetSize( containerWidth, containerHeight )
+    FormContainer:SetSize( containerWidth * 0.75, containerHeight )
     FormContainer:Center()
     FormContainer:MakePopup()
 
@@ -224,6 +242,7 @@ local function openFeedbackForm()
     likelyToReturn.query = "Based on your experiences so far, are you likely to visit our server again within the next two weeks?"
     likelyToReturn.name = "likely_to_return"
     rating.fieldType = "boolean"
+    table.insert( questions, likelyToReturn )
 
     local message = {}
     message.query = "What would you like to say?"
