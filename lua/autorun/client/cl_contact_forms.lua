@@ -204,8 +204,8 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 1000
-    local containerHeight = 900
+    local containerWidth = 950
+    local containerHeight = 800
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
@@ -213,10 +213,10 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local paddingLeft = ( containerWidth * 0.2 ) / 2
+    local paddingLeft = ( containerWidth * 0.15 ) / 2
     local paddingRight = paddingLeft
 
-    local paddingTop = ( containerHeight * 0.1 ) / 2
+    local paddingTop = ( containerHeight * 0.15 ) / 2
     local paddingBottom = paddingTop
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
