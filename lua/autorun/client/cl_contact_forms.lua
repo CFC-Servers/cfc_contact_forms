@@ -44,12 +44,17 @@ local function processFieldsForForm( fields, formData )
 end
 
 local function makeLabel( text, parent )
-    local Label = vgui.Create( "RichText", parent )
-    Label:AppendText( text )
+    local StagingLabel = vgui.Create( "RichText", parent )
+    StagingLabel:SetVerticalScrollbarEnabled( false )
+    StagingLabel:AppendText( text )
 
-    Label:Dock( TOP )
-    Label:DockMargin( 0, 0, 0, 10 )
-    Label:SetWrap( true )
+    StagingLabel:Dock( TOP )
+    StagingLabel:DockMargin( 0, 0, 0, 10 )
+    StagingLabel:SetWrap( true )
+
+    function StagingLabel:PerformLayout()
+        self:SetFontInternal( "Trebuchet24" )
+    end
 end
 
 local function makeTextField( question, parent )
