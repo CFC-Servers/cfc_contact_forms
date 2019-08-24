@@ -47,6 +47,7 @@ end
 local function makeLabel( text, parent )
     local StagingLabel = vgui.Create( "RichText", parent )
     StagingLabel:SetVerticalScrollbarEnabled( false )
+    StagingLabel:SetHeight( 40 )
     StagingLabel:SetText( text )
     StagingLabel:Dock( TOP )
     StagingLabel:DockMargin( 0, 0, 0, 10 )
