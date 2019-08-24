@@ -203,7 +203,7 @@ local function openForm( formData )
     local paddingTop = ( containerHeight * 0.1 ) / 2
     local paddingBottom = paddingTop
 
-    FormContainer:DockPading( paddingLeft, paddingTop, paddingRight, paddingBottom )
+    FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
 
     local Form = vgui.Create( "DScrollPanel", FormContainer )
     Form:Dock( FILL )
