@@ -163,7 +163,7 @@ local function makeFormField( ... )
         return makeSlidingScaleField( ... )
     end
 
-    print( "Not sure what to do with this field type! :" .. fieldType )
+    print( "Not sure what to do with this field type! :" .. fieldType or "nil" )
 end
 
 local function openForm( formData )
@@ -246,7 +246,7 @@ local function openFeedbackForm()
     local likelyToReturn = {}
     likelyToReturn.query = "Based on your experiences so far, are you likely to visit our server again within the next two weeks?"
     likelyToReturn.name = "likely_to_return"
-    rating.fieldType = "boolean"
+    likelytoReturn.fieldType = "boolean"
     table.insert( questions, likelyToReturn )
 
     local message = {}
