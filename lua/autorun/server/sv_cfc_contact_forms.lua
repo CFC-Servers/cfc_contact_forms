@@ -32,6 +32,7 @@ local function submitContactForm( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['contact_method'] = contactMethod
     data['message'] = message
 
@@ -45,6 +46,7 @@ local function submitFeedbackForm( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['rating'] = rating
     data['likely_to_return'] = likelyToReturn
     data['message'] = message
@@ -58,6 +60,7 @@ local function submitBugReport( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['urgency'] = urgency
     data['message'] = message
 
@@ -71,7 +74,9 @@ local function submitPlayerReport( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['reported_steam_id'] = reportedSteamID
+    data['reported_steam_name'] = player.GetBySteamID( reportedSteamID ):GetName()
     data['urgency'] = urgency
     data['message'] = message
 
