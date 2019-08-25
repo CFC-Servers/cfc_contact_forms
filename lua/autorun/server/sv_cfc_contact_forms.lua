@@ -11,6 +11,17 @@ local SUBMISSION_GROOM_INTERVAL = 60
 
 local playerSubmissionCounts = {}
 
+
+local function serverLog( message )
+    local prefix = "[CFC Contact Forms] "
+    print( prefix .. message)
+end
+
+local function alertPlayer( ply, message )
+  local prefix = "[CFC Contact Forms] "
+  ply:ChatPrint( prefix .. message )
+end
+
 local function groomSubmissionCounts()
     for ply, submissionCount in pairs( playerSubmissionCounts ) do
         if submissionCount == 1 then
@@ -36,8 +47,17 @@ local function submitFormForPlayer( data, endpoint, ply )
     if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
-    http.Post( url, data, function( success ) print( success ) end, function( failure ) print( failure ) end )
-
+    http.Post( url, data,
+        function( success )
+            print( success )
+        end,
+        function( failure )
+            serverLog( "Request failed with data:")
+            PrintTable( data )
+            serverLog( failure )
+        end
+    )
+  
     recordPlayerSubmission( ply )
 end
 
@@ -47,21 +67,23 @@ local function submitContactForm( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['contact_method'] = contactMethod
     data['message'] = message
 
     submitFormForPlayer( data, 'contact', ply )
 end
 
-local function submitFeedback( len, ply )
+local function submitFeedbackForm( len, ply )
     local rating = net.ReadString()
     local likelyToReturn = net.ReadString()
     local message = net.ReadString()
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['rating'] = rating
-    data['likelyToReturn'] = likelyToReturn
+    data['likely_to_return'] = likelyToReturn
     data['message'] = message
 
     submitFormForPlayer( data, 'feedback', ply )
@@ -73,6 +95,7 @@ local function submitBugReport( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['urgency'] = urgency
     data['message'] = message
 
@@ -86,7 +109,9 @@ local function submitPlayerReport( len, ply )
 
     local data = {}
     data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
     data['reported_steam_id'] = reportedSteamID
+    data['reported_steam_name'] = player.GetBySteamID( reportedSteamID ):GetName()
     data['urgency'] = urgency
     data['message'] = message
 

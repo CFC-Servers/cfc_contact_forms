@@ -4,9 +4,10 @@ local Frame = nil
 local function makeFormButton(text, pos, callback, parent)
     local Button = vgui.Create( "DButton", parent )
 
-    Button:SetText( text )
+    Button:SetFont( "Trebuchet18" )
     Button:SetTextColor( Color( 255, 255, 255 ) )
     Button:SetPos( LEFT_BORDER + pos.x, pos.y )
+    Button:SetText( text )
 
     local parentX = parent:GetSize()
     local desiredSizeX = parentX - ( LEFT_BORDER * 2 )
@@ -36,27 +37,54 @@ local function processFieldsForForm( fields, formData )
     net.Start( netstring )
         for _, fieldStruct in pairs( fields ) do
             local field = fieldStruct.field
+
+            print("Sending '" .. fieldStruct.name .. "' to the server..")
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()
 end
 
+local function makeLabel( text, parent )
+    local StagingLabel = vgui.Create( "RichText", parent )
+    StagingLabel:SetVerticalScrollbarEnabled( false )
+    StagingLabel:SetHeight( 40 )
+    StagingLabel:SetText( text )
+    StagingLabel:Dock( TOP )
+    StagingLabel:DockMargin( 0, 0, 0, 10 )
+    StagingLabel:SetMultiline( true )
+
+    function StagingLabel:PerformLayout()
+        StagingLabel:SetFontInternal( "Trebuchet24" )
+        StagingLabel:SetToFullHeight()
+    end
+
+    StagingLabel:SetWrap( true )
+end
+
 local function makeTextField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
-    local TextField = parent:TextEntry( query )
+    local TextField = vgui.Create( "DTextEntry", parent )
+    TextField:Dock( TOP )
+    TextField:SetHeight( 200 )
+    TextField:SetMultiline( true )
+    TextField:SetWrap( true )
 
     return TextField
 end
 
 local function makeBooleanField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
-    local ComboBox = parent:ComboBox( query )
+    local ComboBox = vgui.Create( "DComboBox", parent )
+    ComboBox:Dock( TOP )
     ComboBox:AddChoice( "Yes", "yes" )
     ComboBox:AddChoice( "No", "no" )
     ComboBox.GetValue = function()
         local _, data = ComboBox:GetSelected()
+        print( _, data )
 
         return data
     end
@@ -66,32 +94,80 @@ end
 
 local function makePlayerDropdownField( question, parent )
     local query = question.query
+    makeLabel( query, parent )
 
-    local ComboBox = parent:ComboBox( query )
+    local ComboBox = vgui.Create( "DComboBox", parent )
+    ComboBox:Dock( TOP )
 
     for _, ply in pairs( player.GetAll() ) do
+        if ply == LocalPlayer() then continue end
         ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
     end
 
     ComboBox.GetValue = function()
         local _, data = ComboBox:GetSelected()
-
         return data
     end
 
     return ComboBox
 end
 
-local function makeSlidingScaleField( question, parent )
+local function formImage( imageBase, shouldGrayscale )
+    local path = "vgui/cfc/forms/"
+    local grayscale = shouldGrayscale and "_grayscale" or ""
+
+    return path .. imageBase .. grayscale .. ".png"
+end
+
+local function makeSlidingScaleField( question, parent, imageBase )
     local query = question.query
+    makeLabel( query, parent )
 
-    local min = 1
-    local max = 5
-    local precision = 0
+    local ButtonPanel = vgui.Create( "DPanel", parent )
+    ButtonPanel:Dock( TOP )
+    ButtonPanel:SetHeight( 60 )
+    ButtonPanel:SetBackgroundColor( Color( 0, 0, 0, 0 ) )
+    ButtonPanel.selectedValue = nil
+    ButtonPanel.GetValue = function()
+        return ButtonPanel.selectedValue
+    end
 
-    local NumSlider = parent:NumSlider( query, nil, min, max, precision)
+    for i=1, 5 do
+        local backupLabel = "Select: " .. i
+        local Button = vgui.Create( "DImageButton", ButtonPanel )
+        Button:SetSize( 60, 60 )
+        Button:SetImage( formImage( imageBase, true ), backupLabel )
+        Button:DockMargin( 0, 0, 5, 0 )
+        Button:Dock( LEFT )
+        Button.DoClick = function()
+            ButtonPanel.selectedValue = i
 
-    return NumSlider
+            local buttons = ButtonPanel:GetChildren()
+
+            for x = 1, 5 do
+                local backupLabel = "Select: " .. x
+                local InfantButton = buttons[x]
+
+                local grayscale = x > i
+
+                local image = formImage( imageBase, grayscale )
+
+                if InfantButton:GetImage() == image then continue end
+
+                InfantButton:SetImage( image, backupLabel )
+            end
+        end
+    end
+
+    return ButtonPanel
+end
+
+local function makeUrgencyField( question, parent )
+    return makeSlidingScaleField( question, parent, "fire" )
+end
+
+local function makeRatingField( question, parent )
+    return makeSlidingScaleField( question, parent, "star" )
 end
 
 local function makeFormField( ... )
@@ -112,21 +188,21 @@ local function makeFormField( ... )
     end
 
     if fieldType == "urgency" then
-        return makeSlidingScaleField( ... )
+        return makeUrgencyField( ... )
     end
 
     if fieldType == "rating" then
-        return makeSlidingScaleField( ... )
+        return makeRatingField( ... )
     end
 
-    print( "Not sure what to do with this field type! :" .. fieldType )
+    print( "Not sure what to do with this field type! :" .. fieldType or "nil" )
 end
 
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 1200
-    local containerHeight = 600
+    local containerWidth = 950
+    local containerHeight = 800
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
@@ -134,28 +210,35 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local Form = vgui.Create( "DForm", FormContainer )
-    Form:DockMargin( 30, 30, 30, 30 )
-    Form:DockPadding( 30, 30, 30, 30 )
-    Form:SetSize( containerWidth, containerHeight  )
-    Form:Center()
-    Form:SetPos( 0, 30  )
+    local paddingLeft = ( containerWidth * 0.15 ) / 2
+    local paddingRight = paddingLeft
+
+    local paddingTop = ( containerHeight * 0.15 ) / 2
+    local paddingBottom = paddingTop
+
+    FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
+
+    local Form = vgui.Create( "DScrollPanel", FormContainer )
+    Form:Dock( FILL )
 
     local fields = {}
 
     for i, question in pairs( formData.questions ) do
-        local field = makeFormField( question, Form )
+        local Field = makeFormField( question, Form )
+        Field:DockMargin( 0, 0, 0, 15 )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
-        fieldStruct.field = field
+        fieldStruct.field = Field
 
         table.insert( fields, fieldStruct )
     end
 
-    local Submit = Form:Button( "Submit" )
+    local SubmitButton = vgui.Create( "DButton", Form )
+    SubmitButton:SetText( "Submit" )
+    SubmitButton:Dock( TOP )
 
-    Submit.DoClick = function()
+    SubmitButton.DoClick = function()
         processFieldsForForm( fields, formData )
         LocalPlayer():ChatPrint("Thanks for your form submission!")
 
@@ -195,7 +278,7 @@ local function openFeedbackForm()
     local questions = {}
 
     local rating = {}
-    rating.query = "From 1 - 5, 1 being 'Terrible', and 5 being 'Terrific', how would you rate our server?"
+    rating.query = "How would you rate your experience with our server?"
     rating.name = "rating"
     rating.fieldType = "rating"
     table.insert( questions, rating )
@@ -203,7 +286,8 @@ local function openFeedbackForm()
     local likelyToReturn = {}
     likelyToReturn.query = "Based on your experiences so far, are you likely to visit our server again within the next two weeks?"
     likelyToReturn.name = "likely_to_return"
-    rating.fieldType = "boolean"
+    likelyToReturn.fieldType = "boolean"
+    table.insert( questions, likelyToReturn )
 
     local message = {}
     message.query = "What would you like to say?"
@@ -224,7 +308,7 @@ local function openBugReportForm()
     local questions = {}
 
     local urgency = {}
-    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this bug?"
+    urgency.query = "How urgent is this bug?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
     table.insert( questions, urgency )
@@ -254,10 +338,10 @@ local function openPlayerReportForm()
     table.insert( questions, reportedPlayer )
 
     local urgency = {}
-    urgency.query = "On a scale from 1 to 5, where 1 is 'Very low / inconsequential' and 5 is 'Very high / Immediate Concern', how urgent is this situation?"
+    urgency.query = "How urgent is this situation?"
     urgency.name = "urgency"
     urgency.fieldType = "urgency"
-    table.insert( questions, rating )
+    table.insert( questions, urgency )
 
     local message = {}
     message.query = "Please describe the situation in detail. If you've gathered some, please share links containing evidence of wrongdoing."
