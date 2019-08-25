@@ -11,7 +11,6 @@ local SUBMISSION_GROOM_INTERVAL = 60
 
 local playerSubmissionCounts = {}
 
-
 local function serverLog( message )
     local prefix = "[CFC Contact Forms] "
     print( prefix .. message)
