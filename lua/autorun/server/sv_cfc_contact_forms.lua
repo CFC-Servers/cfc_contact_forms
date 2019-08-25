@@ -25,9 +25,9 @@ local function groomSubmissionCounts()
     for ply, submissionCount in pairs( playerSubmissionCounts ) do
         if submissionCount == 1 then
             playerSubmissionCounts[ply] = nil
+        else
+            playerSubmissionCounts[ply] = submissionCount - 1
         end
-
-        playerSubmissionCounts[ply] = submissionCount - 1
     end
 end
 timer.Create( "CFC_GroomFormSubmissions", SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
