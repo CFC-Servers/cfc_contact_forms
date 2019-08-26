@@ -7,12 +7,44 @@ local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
 FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\r", "")
 FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\n", "")
 
-local function serverLog( msg )
+local SUBMISSION_GROOM_INTERVAL = 60
+
+local playerSubmissionCounts = {}
+
+local function serverLog( message )
     local prefix = "[CFC Contact Forms] "
-    print( prefix .. msg)
+    print( prefix .. message)
 end
 
-local function submitForm( data, endpoint )
+local function alertPlayer( ply, message )
+  local prefix = "[CFC Contact Forms] "
+  ply:ChatPrint( prefix .. message )
+end
+
+local function groomSubmissionCounts()
+    for ply, submissionCount in pairs( playerSubmissionCounts ) do
+        if submissionCount == 1 then
+            playerSubmissionCounts[ply] = nil
+        else
+            playerSubmissionCounts[ply] = submissionCount - 1
+        end
+    end
+end
+timer.Create( "CFC_GroomFormSubmissions", SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
+
+local function recordPlayerSubmission( ply )
+    local count = playerSubmissionCounts[ply] or 0
+
+    playerSubmissionCounts[ply] = count + 1
+end
+
+local function playerCanSubmit( ply )
+    return ( playerSubmissionCounts[ply] or 0 ) < 3
+end
+
+local function submitFormForPlayer( data, endpoint, ply )
+    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
+
     local url = FORM_PROCESSOR_URL ..  endpoint
     http.Post( url, data,
         function( success )
@@ -24,6 +56,8 @@ local function submitForm( data, endpoint )
             serverLog( failure )
         end
     )
+  
+    recordPlayerSubmission( ply )
 end
 
 local function submitContactForm( len, ply )
@@ -36,7 +70,7 @@ local function submitContactForm( len, ply )
     data['contact_method'] = contactMethod
     data['message'] = message
 
-    submitForm( data, 'contact' )
+    submitFormForPlayer( data, 'contact', ply )
 end
 
 local function submitFeedbackForm( len, ply )
@@ -51,7 +85,7 @@ local function submitFeedbackForm( len, ply )
     data['likely_to_return'] = likelyToReturn
     data['message'] = message
 
-    submitForm( data, 'feedback' )
+    submitFormForPlayer( data, 'feedback', ply )
 end
 
 local function submitBugReport( len, ply )
@@ -64,7 +98,7 @@ local function submitBugReport( len, ply )
     data['urgency'] = urgency
     data['message'] = message
 
-    submitForm( data, 'bug-report' )
+    submitFormForPlayer( data, 'bug-report', ply )
 end
 
 local function submitPlayerReport( len, ply )
@@ -80,7 +114,7 @@ local function submitPlayerReport( len, ply )
     data['urgency'] = urgency
     data['message'] = message
 
-    submitForm( data, 'player-report' )
+    submitFormForPlayer( data, 'player-report', ply )
 end
 
 net.Receive( 'CFC_SubmitContactForm', submitContactForm )
