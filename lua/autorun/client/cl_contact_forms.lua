@@ -15,7 +15,10 @@ local function makeFormButton(text, pos, callback, parent)
     Button:SetSize( desiredSizeX, 30 )
 
     Button.Paint = function( self, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 250 ) )
+        draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
+
+        surface.SetDrawColor( 255, 255, 255, 255 )
+        surface.DrawOutlinedRect( 0, 0, w, h )
     end
 
     Button.DoClick = callback
@@ -356,10 +359,15 @@ end
 
 local function openForms()
     Frame = vgui.Create( "DFrame" )
+    Frame:SetBackgroundBlur( true )
     Frame:SetTitle( "Contact Forms" )
     Frame:SetSize( 300, 300 )
     Frame:Center()
     Frame:MakePopup()
+
+    Frame.Paint = function( w, h )
+        draw.RoundedBox( 8, 0, 0, 300, 300, Color( 36, 41, 67, 255 ) )
+    end
 
     makeFormButton( "Contact", { ['x'] = 0, ['y'] = 50 }, openContactForm, Frame )
     makeFormButton( "Feedback", { ['x'] = 0, ['y'] = 100 }, openFeedbackForm, Frame )
