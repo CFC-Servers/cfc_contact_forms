@@ -1,16 +1,17 @@
 local LEFT_BORDER = 10
 local Frame = nil
 
-local function makeFormButton(text, pos, callback, parent)
+local function makeFormButton(text, callback, parent)
     local Button = vgui.Create( "DButton", parent )
 
-    Button:SetFont( "Trebuchet18" )
+    Button:SetFont( "Trebuchet24" )
     Button:SetTextColor( Color( 255, 255, 255 ) )
-    Button:SetPos( LEFT_BORDER + pos.x, pos.y )
+    Button:Dock( TOP )
+    Button:DockMargin( 0, 0, 0, 25 )
     Button:SetText( text )
 
     local parentX = parent:GetSize()
-    local desiredSizeX = parentX - ( LEFT_BORDER * 2 )
+    local desiredSizeX = parentX * 0.8
 
     Button:SetSize( desiredSizeX, 30 )
 
@@ -57,6 +58,7 @@ local function makeLabel( text, parent )
     StagingLabel:SetMultiline( true )
 
     function StagingLabel:PerformLayout()
+        StagingLabel:SetFGColor( Color( 255, 255, 255, 255 ) )
         StagingLabel:SetFontInternal( "Trebuchet24" )
         StagingLabel:SetToFullHeight()
     end
@@ -73,6 +75,8 @@ local function makeTextField( question, parent )
     TextField:SetHeight( 200 )
     TextField:SetMultiline( true )
     TextField:SetWrap( true )
+    --TextField:SetTextColor( Color( 212, 212, 255, 9 ) )
+    TextField:SetFont( "Trebuchet24" )
 
     return TextField
 end
@@ -221,8 +225,26 @@ local function openForm( formData )
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
 
+    function FormContainer:Init()
+        self.startTime = SysTime()
+    end
+
+    FormContainer.Paint = function( self )
+        Derma_DrawBackgroundBlur( self, self.startTime )
+        draw.RoundedBox( 8, 0, 0, containerWidth, containerHeight, Color( 36, 41, 67, 255 ) )
+    end
+
+    --local FormShell = vgui.Create( "DScrollPanel", FormContainer )
+    --FormShell:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
+    --FormShell:Dock( FILL )
+    --FormShell:Center()
+
     local Form = vgui.Create( "DScrollPanel", FormContainer )
+    Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
+    Form:Center()
     Form:Dock( FILL )
+    Form:DockMargin( 0, 80, 0, 0 )
+    Form:Center()
 
     local fields = {}
 
@@ -237,9 +259,21 @@ local function openForm( formData )
         table.insert( fields, fieldStruct )
     end
 
+
     local SubmitButton = vgui.Create( "DButton", Form )
-    SubmitButton:SetText( "Submit" )
     SubmitButton:Dock( TOP )
+    SubmitButton:SetText( "Submit" )
+    SubmitButton:SetTextColor( Color( 255, 255, 255 ) )
+    SubmitButton:SetFont( "Trebuchet24" )
+    SubmitButton:SetSize( 100, 60 )
+
+    SubmitButton.Paint = function( self, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
+
+        surface.SetDrawColor( 255, 255, 255, 255 )
+        surface.DrawOutlinedRect( 0, 0, w, h )
+    end
+
 
     SubmitButton.DoClick = function()
         processFieldsForForm( fields, formData )
@@ -358,21 +392,35 @@ local function openPlayerReportForm()
 end
 
 local function openForms()
+    local x = 400
+    local y = 500
+
     Frame = vgui.Create( "DFrame" )
     Frame:SetBackgroundBlur( true )
     Frame:SetTitle( "Contact Forms" )
-    Frame:SetSize( 300, 300 )
+    Frame:SetSize( x, y )
     Frame:Center()
     Frame:MakePopup()
 
-    Frame.Paint = function( w, h )
-        draw.RoundedBox( 8, 0, 0, 300, 300, Color( 36, 41, 67, 255 ) )
+    function Frame:Init()
+        self.startTime = SysTime()
     end
 
-    makeFormButton( "Contact", { ['x'] = 0, ['y'] = 50 }, openContactForm, Frame )
-    makeFormButton( "Feedback", { ['x'] = 0, ['y'] = 100 }, openFeedbackForm, Frame )
-    makeFormButton( "Bug Report", { ['x'] = 0, ['y'] = 150 }, openBugReportForm, Frame )
-    makeFormButton( "Player Report", { ['x'] = 0, ['y'] = 200 }, openPlayerReportForm, Frame )
+    Frame.Paint = function( self )
+        Derma_DrawBackgroundBlur( self, self.startTime )
+        draw.RoundedBox( 8, 0, 0, x, y, Color( 36, 41, 67, 255 ) )
+    end
+
+    Pane = vgui.Create( "DPanel", Frame )
+    Pane:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
+    Pane:DockPadding( 30, 30, 30, 0 )
+    Pane:Dock( FILL )
+    Pane:Center()
+
+    makeFormButton( "Contact", openContactForm, Pane )
+    makeFormButton( "Feedback", openFeedbackForm, Pane )
+    makeFormButton( "Bug Report", openBugReportForm, Pane )
+    makeFormButton( "Player Report", openPlayerReportForm, Pane )
 end
 
 concommand.Add( "cfc_forms", openForms )
