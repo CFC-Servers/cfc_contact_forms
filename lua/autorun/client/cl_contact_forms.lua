@@ -234,10 +234,15 @@ local function openForm( formData )
         draw.RoundedBox( 8, 0, 0, containerWidth, containerHeight, Color( 36, 41, 67, 255 ) )
     end
 
-    --local FormShell = vgui.Create( "DScrollPanel", FormContainer )
-    --FormShell:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
-    --FormShell:Dock( FILL )
-    --FormShell:Center()
+    local BackButton = vgui.Create( "DImageButton", FormContainer )
+    BackButton:SetSize( 60, 60 )
+    BackButton:SetPos( 20, 20 )
+    BackButton:SetImage( formImage( "back" ), "Back" )
+    BackButton:DockMargin( 0, 0, 5, 0 )
+    BackButton.DoClick = function()
+        FormContainer:Close()
+        CFCContactForms.openForms()
+    end
 
     local Form = vgui.Create( "DScrollPanel", FormContainer )
     Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
@@ -259,7 +264,6 @@ local function openForm( formData )
         table.insert( fields, fieldStruct )
     end
 
-
     local SubmitButton = vgui.Create( "DButton", Form )
     SubmitButton:Dock( TOP )
     SubmitButton:SetText( "Submit" )
@@ -274,13 +278,13 @@ local function openForm( formData )
         surface.DrawOutlinedRect( 0, 0, w, h )
     end
 
-
     SubmitButton.DoClick = function()
         processFieldsForForm( fields, formData )
         LocalPlayer():ChatPrint("Thanks for your form submission!")
 
         FormContainer:Close()
     end
+
 end
 
 local function openContactForm()
@@ -391,7 +395,9 @@ local function openPlayerReportForm()
     openForm( formData )
 end
 
-local function openForms()
+CFCContactForms = CFCContactForms or {}
+
+CFCContactForms.openForms = function()
     local x = 400
     local y = 500
 
@@ -423,4 +429,4 @@ local function openForms()
     makeFormButton( "Player Report", openPlayerReportForm, Pane )
 end
 
-concommand.Add( "cfc_forms", openForms )
+concommand.Add( "cfc_forms", CFCContactForms.openForms )
