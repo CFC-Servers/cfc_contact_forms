@@ -49,12 +49,13 @@ local function processFieldsForForm( fields, formData )
 end
 
 local function makeLabel( text, parent )
-    local StagingLabel = vgui.Create( "RichText", parent )
+    local StagingLabel = vgui.Create( "DLabel", parent )
     StagingLabel:SetVerticalScrollbarEnabled( false )
-    StagingLabel:SetHeight( 40 )
+    StagingLabel:SetHeight( 50 )
+    StagingLabel:SetContentAlignment( 1 )
     StagingLabel:SetText( text )
     StagingLabel:Dock( TOP )
-    StagingLabel:DockMargin( 0, 0, 0, 10 )
+    StagingLabel:DockMargin( 0, 0, 0, 15 )
     StagingLabel:SetMultiline( true )
 
     function StagingLabel:PerformLayout()
@@ -70,30 +71,70 @@ end
 
 local function makeHeader( text, parent )
     local StagingHeader = makeLabel( text, parent )
-    StagingHeader:DockMargin( 0, 0, 0, 40 )
     StagingHeader:SetHeight( 100 )
+    StagingHeader:SetContentAlignment( 5 )
     StagingHeader:Dock( TOP )
+    StagingHeader:DockMargin( 0, 0, 0, 0 )
+    StagingHeader:Center()
 
     function StagingHeader:PerformLayout()
         StagingHeader:SetFGColor( Color( 255, 255, 255, 255 ) )
-        StagingHeader:SetFontInternal( "DermaLarge" )
+        StagingHeader:SetFontInternal( "Trebuchet24" )
         StagingHeader:SetToFullHeight()
     end
 
     return StagingHeader
 end
 
+surface.CreateFont( "CFCFormTitle", {
+    font = "DermaLarge",
+    size = 56
+})
+
+local function makeTitle( text, parent )
+    local Title = vgui.Create( "DLabel", parent )
+    Title:SetVerticalScrollbarEnabled( false )
+    Title:SetHeight( 80 )
+    Title:SetText( text )
+    Title:SetContentAlignment( 5 )
+    Title:SetWrap( false )
+    Title:Dock(TOP)
+    Title:DockMargin( 0, 10, 0, 30 )
+
+    function Title:PerformLayout(w1, w2)
+        Title:SetFGColor( Color( 255, 255, 255, 255 ) )
+        Title:SetFontInternal( "CFCFormTitle" )
+        Title:SetToFullHeight()
+    end
+
+    return Title
+end
+
 local function makeTextField( question, parent )
     local query = question.query
     makeLabel( query, parent )
 
-    local TextField = vgui.Create( "DTextEntry", parent )
-    TextField:Dock( TOP )
-    TextField:SetHeight( 200 )
+    local TextFieldContainer = vgui.Create("DPanel", parent )
+    TextFieldContainer:Dock( TOP )
+    TextFieldContainer:DockMargin( 0, 15, 0, 0 )
+    TextFieldContainer:SetHeight( 200 )
+
+    function TextFieldContainer:Paint( w, h )
+        surface.SetDrawColor( Color( 44, 48, 74 ) )
+        surface.DrawRect(0, 0, w, h)
+    end
+
+    local TextField = vgui.Create( "DTextEntry", TextFieldContainer )
+    TextField:Dock( FILL )
     TextField:SetMultiline( true )
     TextField:SetWrap( true )
-    --TextField:SetTextColor( Color( 212, 212, 255, 9 ) )
+    TextField:SetTextColor( Color( 255, 255, 255, 255 ) )
+    TextField:SetCursorColor(Color(255,255,255))
     TextField:SetFont( "Trebuchet24" )
+
+    TextField:SetUpdateOnType( true )
+    TextField:SetPaintBackgroundEnabled( false )
+    TextField.m_bBackground = false
 
     return TextField
 end
@@ -132,6 +173,7 @@ local function makePlayerDropdownField( question, parent )
         local _, data = ComboBox:GetSelected()
         return data
     end
+
 
     return ComboBox
 end
@@ -222,14 +264,46 @@ local function makeFormField( ... )
     print( "Not sure what to do with this field type! :" .. fieldType or "nil" )
 end
 
+local function makeFormErrorAlert( parent )
+    local Alert = vgui.Create( "DLabel", parent )
+    Alert:SetFont( "Trebuchet24" )
+    Alert:SetText( "Please fill out all of the fields!" )
+    Alert:SetTextColor( Color( 255, 0, 0 ) )
+    Alert:SetVerticalScrollbarEnabled( false )
+    Alert:SetHeight( 80 )
+    Alert:SetContentAlignment( 5 )
+    Alert:SetWrap( false )
+
+    Alert:Dock( TOP )
+    Alert:DockMargin( 0, 0, 0, 0 )
+
+    -- Defaults to invisible
+    Alert:SetAlpha( 0 )
+
+    return Alert
+end
+
+local function fieldsAreValid( fields )
+    for _, fieldStruct in pairs( fields ) do
+        local field = fieldStruct.field
+
+        local value = field:GetValue()
+
+        if not value then return false end
+        if value == "" then return false end
+    end
+
+    return true
+end
+
 local function openForm( formData )
     Frame:Close()
 
     local containerWidth = 1000
-    local containerHeight = 900
+    local containerHeight = 1000
 
     local FormContainer = vgui.Create( "DFrame" )
-    FormContainer:SetTitle( formData.title )
+    FormContainer:SetTitle( "" )
     FormContainer:SetSize( containerWidth, containerHeight )
     FormContainer:Center()
     FormContainer:MakePopup()
@@ -237,7 +311,7 @@ local function openForm( formData )
     local paddingLeft = ( containerWidth * 0.05 ) / 2
     local paddingRight = paddingLeft
 
-    local paddingTop = ( containerHeight * 0.05 ) / 2
+    local paddingTop = ( containerHeight * 0.03 ) / 2
     local paddingBottom = paddingTop
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
@@ -258,6 +332,7 @@ local function openForm( formData )
     BackButton.DoClick = function()
         FormContainer:Close()
         CFCContactForms.openForms()
+        timer.Remove( "CFC_FadeInForm" )
     end
 
     local Form = vgui.Create( "DScrollPanel", FormContainer )
@@ -267,10 +342,32 @@ local function openForm( formData )
     Form:DockMargin( 0, 50, 0, 0 )
     Form:Center()
 
+    local currentAlpha = -100
+    Form:SetAlpha( currentAlpha )
+
+    -- Transition
+    local duration = 2
+    local steps = 100
+    local stepDelta = ( ( 255 - currentAlpha ) / steps )
+
+    timer.Create( "CFC_FadeInForm", duration / steps, steps, function()
+        currentAlpha = currentAlpha + stepDelta
+        Form:SetAlpha( currentAlpha )
+    end )
+
+    function FormContainer:OnClose()
+        timer.Remove( "CFC_FadeInForm" )
+    end
+    --
+
+    makeTitle( formData.title, Form )
+
     local headerTextStruct = formData.headerText
     local headerTextContent = table.concat( headerTextStruct, "\n" )
 
     makeHeader( headerTextContent, Form )
+
+    local FormAlert = makeFormErrorAlert( Form )
 
     local fields = {}
 
@@ -300,10 +397,14 @@ local function openForm( formData )
     end
 
     SubmitButton.DoClick = function()
-        processFieldsForForm( fields, formData )
-        LocalPlayer():ChatPrint("Thanks for your form submission!")
+        if fieldsAreValid( fields ) then
+            processFieldsForForm( fields, formData )
+            FormContainer:Close()
 
-        FormContainer:Close()
+            notification.AddLegacy( "Thanks for your form submission!", NOTIFY_UNDO, 5 )
+        else
+            FormAlert:SetAlpha( 255 )
+        end
     end
 
 end
