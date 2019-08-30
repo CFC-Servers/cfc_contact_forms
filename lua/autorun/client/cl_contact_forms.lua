@@ -64,6 +64,23 @@ local function makeLabel( text, parent )
     end
 
     StagingLabel:SetWrap( true )
+
+    return StagingLabel
+end
+
+local function makeHeader( text, parent )
+    local StagingHeader = makeLabel( text, parent )
+    StagingHeader:DockMargin( 0, 0, 0, 40 )
+    StagingHeader:SetHeight( 100 )
+    StagingHeader:Dock( TOP )
+
+    function StagingHeader:PerformLayout()
+        StagingHeader:SetFGColor( Color( 255, 255, 255, 255 ) )
+        StagingHeader:SetFontInternal( "DermaLarge" )
+        StagingHeader:SetToFullHeight()
+    end
+
+    return StagingHeader
 end
 
 local function makeTextField( question, parent )
@@ -208,8 +225,8 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 950
-    local containerHeight = 800
+    local containerWidth = 1000
+    local containerHeight = 900
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( formData.title )
@@ -217,10 +234,10 @@ local function openForm( formData )
     FormContainer:Center()
     FormContainer:MakePopup()
 
-    local paddingLeft = ( containerWidth * 0.15 ) / 2
+    local paddingLeft = ( containerWidth * 0.05 ) / 2
     local paddingRight = paddingLeft
 
-    local paddingTop = ( containerHeight * 0.15 ) / 2
+    local paddingTop = ( containerHeight * 0.05 ) / 2
     local paddingBottom = paddingTop
 
     FormContainer:DockPadding( paddingLeft, paddingTop, paddingRight, paddingBottom )
@@ -235,10 +252,9 @@ local function openForm( formData )
     end
 
     local BackButton = vgui.Create( "DImageButton", FormContainer )
-    BackButton:SetSize( 60, 60 )
+    BackButton:SetSize( 32, 32 )
     BackButton:SetPos( 20, 20 )
-    BackButton:SetImage( formImage( "backbutton" ), "Back" )
-    BackButton:DockMargin( 0, 0, 5, 0 )
+    BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
         FormContainer:Close()
         CFCContactForms.openForms()
@@ -248,14 +264,19 @@ local function openForm( formData )
     Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
     Form:Center()
     Form:Dock( FILL )
-    Form:DockMargin( 0, 80, 0, 0 )
+    Form:DockMargin( 0, 50, 0, 0 )
     Form:Center()
+
+    local headerTextStruct = formData.headerText
+    local headerTextContent = table.concat( headerTextStruct, "\n" )
+
+    makeHeader( headerTextContent, Form )
 
     local fields = {}
 
     for i, question in pairs( formData.questions ) do
         local Field = makeFormField( question, Form )
-        Field:DockMargin( 0, 0, 0, 15 )
+        Field:DockMargin( 0, 0, 0, 25 )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
@@ -292,6 +313,10 @@ local function openContactForm()
     formData.title = "Contact Form"
     formData.formType = "contact"
 
+    formData.headerText = {
+        "We'd love to hear from you! Just tell us how we can get in touch with you, and a brief description of your question/comment/concern and we'll get back to you ASAP!"
+    }
+
     local questions = {}
 
     local contactMethod = {}
@@ -315,6 +340,11 @@ local function openFeedbackForm()
     local formData = {}
     formData.title = "Feedback Form"
     formData.formType = "feedback"
+
+    formData.headerText = {
+        "We thrive on your feedback! Please let us know what you think, we're always trying to improve your experience",
+        "Be sure to let us know if you have any suggestions for how we can do better!"
+    }
 
     local questions = {}
 
@@ -346,6 +376,11 @@ local function openBugReportForm()
     formData.title = "Bug Report Form"
     formData.formType = "bug-report"
 
+    formData.headerText = {
+        "Uh oh! Have you experienced something unsavory, or otherwise unexpected?",
+        "Please tell us about it - we have a team of dedicated developers who love squashing bugs"
+    }
+
     local questions = {}
 
     local urgency = {}
@@ -369,6 +404,12 @@ local function openPlayerReportForm()
     local formData = {}
     formData.title = "Player Report Form"
     formData.formType = "player-report"
+
+    formData.headerText = {
+        "Is a player ruining the experience of others?",
+        "Tell us about it! Our staff will receive this report immediately and will take action as soon as they can.",
+        "Please, only one player per report!"
+    }
 
     local questions = {}
 
@@ -419,7 +460,7 @@ CFCContactForms.openForms = function()
 
     Pane = vgui.Create( "DPanel", Frame )
     Pane:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
-    Pane:DockPadding( 30, 30, 30, 0 )
+    Pane:DockPadding( 30, 15, 30, 0 )
     Pane:Dock( FILL )
     Pane:Center()
 
