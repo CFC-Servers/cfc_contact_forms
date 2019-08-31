@@ -34,6 +34,13 @@ FORM_TYPE_TO_NETSTRING = {
     [ "player-report" ] = "CFC_SubmitPlayerReport"
 }
 
+local function formImage( imageBase, shouldGrayscale )
+    local path = "vgui/cfc/forms/"
+    local grayscale = shouldGrayscale and "_grayscale" or ""
+
+    return path .. imageBase .. grayscale .. ".png"
+end
+
 local function processFieldsForForm( fields, formData )
     local formType = formData.formType
     local netstring = FORM_TYPE_TO_NETSTRING[formType]
@@ -143,18 +150,71 @@ local function makeBooleanField( question, parent )
     local query = question.query
     makeLabel( query, parent )
 
-    local ComboBox = vgui.Create( "DComboBox", parent )
-    ComboBox:Dock( TOP )
-    ComboBox:AddChoice( "Yes", "yes" )
-    ComboBox:AddChoice( "No", "no" )
-    ComboBox.GetValue = function()
-        local _, data = ComboBox:GetSelected()
-        print( _, data )
-
-        return data
+    local ButtonPanel = vgui.Create( "DPanel", parent )
+    ButtonPanel:Dock( TOP )
+    ButtonPanel:SetHeight( 60 )
+    ButtonPanel:SetBackgroundColor( Color( 0, 0, 0, 0 ) )
+    ButtonPanel.selectedValue = nil
+    ButtonPanel.GetValue = function()
+        return ButtonPanel.selectedValue
     end
 
-    return ComboBox
+    local YesButton = nil
+    local NoButton = nil
+
+    -- Yes Button
+    YesButton = vgui.Create( "DImageButton", ButtonPanel )
+    YesButton:SetSize( 40, 40 )
+    YesButton:SetImage( formImage( "radio" ) )
+    YesButton:Dock( LEFT )
+    YesButton.DoClick = function()
+        ButtonPanel.selectedValue = "yes"
+        YesButton:SetImage( formImage( "radio-filled" ) )
+        NoButton:SetImage( formImage( "radio" ) )
+    end
+    ---
+    
+    -- Yes Label
+    local YesLabel = vgui.Create( "DLabel", ButtonPanel )
+    YesLabel:SetVerticalScrollbarEnabled( false )
+    YesLabel:SetHeight( 40 )
+    YesLabel:SetText( "Yes" )
+    YesLabel:Dock( LEFT )
+    YesLabel:DockMargin( 15, 0, 0, 0 )
+    function YesLabel:PerformLayout()
+        YesLabel:SetFGColor( Color( 255, 255, 255, 255 ) )
+        YesLabel:SetFontInternal( "Trebuchet24" )
+        YesLabel:SetToFullHeight()
+    end
+    ---
+
+    -- No Button
+    NoButton = vgui.Create( "DImageButton", ButtonPanel )
+    NoButton:SetSize( 40, 40 )
+    NoButton:SetImage( formImage( "radio" ) )
+    NoButton:Dock( LEFT )
+    NoButton.DoClick = function()
+        ButtonPanel.selectedValue = "no"
+        NoButton:SetImage( formImage( "radio-filled" ) )
+        YesButton:SetImage( formImage( "radio" ) )
+    end
+    ---
+
+    -- No Label
+    local NoLabel = vgui.Create( "DLabel", ButtonPanel )
+    NoLabel:SetVerticalScrollbarEnabled( false )
+    NoLabel:SetHeight( 40 )
+    NoLabel:SetText( "No" )
+    NoLabel:Dock( LEFT )
+    NoLabel:DockMargin( 15, 0, 0, 0 )
+    function NoLabel:PerformLayout()
+        NoLabel:SetFGColor( Color( 255, 255, 255, 255 ) )
+        NoLabel:SetFontInternal( "Trebuchet24" )
+        NoLabel:SetToFullHeight()
+    end
+    ---
+
+    return ButtonPanel
 end
 
 local function makePlayerDropdownField( question, parent )
@@ -176,13 +236,6 @@ local function makePlayerDropdownField( question, parent )
 
 
     return ComboBox
-end
-
-local function formImage( imageBase, shouldGrayscale )
-    local path = "vgui/cfc/forms/"
-    local grayscale = shouldGrayscale and "_grayscale" or ""
-
-    return path .. imageBase .. grayscale .. ".png"
 end
 
 local function makeSlidingScaleField( question, parent, imageBase )
@@ -325,38 +378,62 @@ local function openForm( formData )
         draw.RoundedBox( 8, 0, 0, containerWidth, containerHeight, Color( 36, 41, 67, 255 ) )
     end
 
+    -- Needed for the timers to fade the form out
+    local Form = nil
+
     local BackButton = vgui.Create( "DImageButton", FormContainer )
     BackButton:SetSize( 32, 32 )
     BackButton:SetPos( 20, 20 )
     BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
-        FormContainer:Close()
-        CFCContactForms.openForms()
-        timer.Remove( "CFC_FadeInForm" )
+        --local closeDuration = 0.5
+        --local closeSteps = 33
+        --local closeStep = 1
+
+        --timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
+        --    local newAlpha =  0 * math.pow( 5, 10 * ( closeStep / closeSteps - 1 ) ) + 255;
+        --    print(newAlpha)
+        --    Form:SetAlpha( newAlpha )
+
+        --    closeStep = closeStep + 1
+        --end )
+
+        --timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
+            FormContainer:Close()
+            CFCContactForms.openForms()
+            timer.Remove( "CFC_FadeInForm" )
+            timer.Remove( "CFC_FadeOutForm" )
+            timer.Remove( "CFC_DelayCloseForm" )
+        --end )
     end
 
-    local Form = vgui.Create( "DScrollPanel", FormContainer )
+    Form = vgui.Create( "DScrollPanel", FormContainer )
     Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
     Form:Center()
     Form:Dock( FILL )
     Form:DockMargin( 0, 50, 0, 0 )
     Form:Center()
 
-    local currentAlpha = -100
-    Form:SetAlpha( currentAlpha )
+    Form:SetAlpha( 0 )
 
     -- Transition
-    local duration = 2
-    local steps = 100
-    local stepDelta = ( ( 255 - currentAlpha ) / steps )
+    local duration = 1
+    local steps = 33
+
+    local step = 1
 
     timer.Create( "CFC_FadeInForm", duration / steps, steps, function()
-        currentAlpha = currentAlpha + stepDelta
-        Form:SetAlpha( currentAlpha )
+        local newAlpha =  255 * math.pow( 5, 10 * ( step/steps - 1 ) );
+        print(newAlpha)
+        Form:SetAlpha( newAlpha )
+
+        step = step + 1
     end )
 
     function FormContainer:OnClose()
         timer.Remove( "CFC_FadeInForm" )
+        timer.Remove( "CFC_FadeOutForm" )
+        timer.Remove( "CFC_DelayCloseForm" )
     end
     --
 

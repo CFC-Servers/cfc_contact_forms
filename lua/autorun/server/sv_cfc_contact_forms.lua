@@ -43,6 +43,11 @@ local function playerCanSubmit( ply )
 end
 
 local function submitFormForPlayer( data, endpoint, ply )
+    local plyName = ply and ply:GetName() or "Unknown Player"
+
+    serverLog( "Sending request for <" .. plyName .. "> with form data: " )
+    PrintTable( data )
+
     if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
@@ -56,7 +61,7 @@ local function submitFormForPlayer( data, endpoint, ply )
             serverLog( failure )
         end
     )
-  
+
     recordPlayerSubmission( ply )
 end
 
