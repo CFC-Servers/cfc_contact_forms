@@ -152,7 +152,7 @@ local function makeBooleanField( question, parent )
 
     local ButtonPanel = vgui.Create( "DPanel", parent )
     ButtonPanel:Dock( TOP )
-    ButtonPanel:SetHeight( 60 )
+    ButtonPanel:SetHeight( 40 )
     ButtonPanel:SetBackgroundColor( Color( 0, 0, 0, 0 ) )
     ButtonPanel.selectedValue = nil
     ButtonPanel.GetValue = function()
@@ -173,7 +173,7 @@ local function makeBooleanField( question, parent )
         NoButton:SetImage( formImage( "radio" ) )
     end
     ---
-    
+
     -- Yes Label
     local YesLabel = vgui.Create( "DLabel", ButtonPanel )
     YesLabel:SetVerticalScrollbarEnabled( false )
@@ -323,7 +323,7 @@ local function makeFormErrorAlert( parent )
     Alert:SetText( "Please fill out all of the fields!" )
     Alert:SetTextColor( Color( 255, 0, 0 ) )
     Alert:SetVerticalScrollbarEnabled( false )
-    Alert:SetHeight( 80 )
+    Alert:SetHeight( 60 )
     Alert:SetContentAlignment( 5 )
     Alert:SetWrap( false )
 
@@ -352,8 +352,8 @@ end
 local function openForm( formData )
     Frame:Close()
 
-    local containerWidth = 1000
-    local containerHeight = 1000
+    local containerWidth = ScrW() * 0.52
+    local containerHeight = ScrH() * 0.93
 
     local FormContainer = vgui.Create( "DFrame" )
     FormContainer:SetTitle( "" )
@@ -383,7 +383,11 @@ local function openForm( formData )
 
     local BackButton = vgui.Create( "DImageButton", FormContainer )
     BackButton:SetSize( 32, 32 )
-    BackButton:SetPos( 20, 20 )
+
+    local backPosX = containerWidth * 0.02
+    local backPosY = containerHeight * 0.02
+    BackButton:SetPos( backPosX, backPosY )
+
     BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
         --local closeDuration = 0.5
@@ -411,7 +415,10 @@ local function openForm( formData )
     Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
     Form:Center()
     Form:Dock( FILL )
-    Form:DockMargin( 0, 50, 0, 0 )
+
+    local backButtonTopMargin = ScrH() * 0.05
+    Form:DockMargin( 0, backButtonTopMargin, 0, 0 )
+
     Form:Center()
 
     Form:SetAlpha( 0 )
@@ -424,7 +431,6 @@ local function openForm( formData )
 
     timer.Create( "CFC_FadeInForm", duration / steps, steps, function()
         local newAlpha =  255 * math.pow( 5, 10 * ( step/steps - 1 ) );
-        print(newAlpha)
         Form:SetAlpha( newAlpha )
 
         step = step + 1
@@ -450,7 +456,9 @@ local function openForm( formData )
 
     for i, question in pairs( formData.questions ) do
         local Field = makeFormField( question, Form )
-        Field:DockMargin( 0, 0, 0, 25 )
+
+        local bottomMargin = ScrH() * 0.025
+        Field:DockMargin( 0, 0, 0, bottomMargin )
 
         local fieldStruct = {}
         fieldStruct.name = question.name
@@ -464,7 +472,9 @@ local function openForm( formData )
     SubmitButton:SetText( "Submit" )
     SubmitButton:SetTextColor( Color( 255, 255, 255 ) )
     SubmitButton:SetFont( "Trebuchet24" )
-    SubmitButton:SetSize( 100, 60 )
+
+    local submitHeight = ScrH() * 0.06
+    SubmitButton:SetHeight( submitHeight )
 
     SubmitButton.Paint = function( self, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
