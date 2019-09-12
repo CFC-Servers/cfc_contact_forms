@@ -498,7 +498,7 @@ end
 
 local function openContactForm()
     local formData = {}
-    formData.title = "Contact Form"
+    formData.title = "Contact"
     formData.formType = "contact"
 
     formData.headerText = {
@@ -526,11 +526,11 @@ end
 
 local function openFeedbackForm()
     local formData = {}
-    formData.title = "Feedback Form"
+    formData.title = "Feedback"
     formData.formType = "feedback"
 
     formData.headerText = {
-        "We thrive on your feedback! Please let us know what you think, we're always trying to improve your experience",
+        "We thrive on your feedback! Please let us know what you think, we're always trying to improve your experience.",
         "Be sure to let us know if you have any suggestions for how we can do better!"
     }
 
@@ -561,12 +561,12 @@ end
 
 local function openBugReportForm()
     local formData = {}
-    formData.title = "Bug Report Form"
+    formData.title = "Bug Report"
     formData.formType = "bug-report"
 
     formData.headerText = {
         "Uh oh! Have you experienced something unsavory, or otherwise unexpected?",
-        "Please tell us about it - we have a team of dedicated developers who love squashing bugs"
+        "Please tell us about it - we have a team of dedicated developers who love squashing bugs!"
     }
 
     local questions = {}
@@ -590,7 +590,7 @@ end
 
 local function openPlayerReportForm()
     local formData = {}
-    formData.title = "Player Report Form"
+    formData.title = "Player Report"
     formData.formType = "player-report"
 
     formData.headerText = {
@@ -602,7 +602,7 @@ local function openPlayerReportForm()
     local questions = {}
 
     local reportedPlayer = {}
-    reportedPlayer.query = "Please select the player you wish to report"
+    reportedPlayer.query = "Please select the player you wish to report."
     reportedPlayer.name = "reportedPlayer"
     reportedPlayer.fieldType = "player-dropdown"
     table.insert( questions, reportedPlayer )
