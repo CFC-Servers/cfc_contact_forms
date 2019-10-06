@@ -49,7 +49,7 @@ local function processFieldsForForm( fields, formData )
         for _, fieldStruct in pairs( fields ) do
             local field = fieldStruct.field
 
-            print( "Sending '" .. fieldStruct.name .. "' to the server.." )
+            print( "Sending '" .. fieldStruct.name .. "' to the server .. " )
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()
@@ -136,7 +136,7 @@ local function makeTextField( question, parent )
     TextField:SetMultiline( true )
     TextField:SetWrap( true )
     TextField:SetTextColor( Color( 255, 255, 255, 255 ) )
-    TextField:SetCursorColor( Color( 255,255,255 ) )
+    TextField:SetCursorColor( Color( 255, 255, 255 ) )
     TextField:SetFont( "Trebuchet24" )
 
     TextField:SetUpdateOnType( true )
@@ -172,7 +172,7 @@ local function makeBooleanField( question, parent )
         YesButton:SetImage( formImage( "radio-filled" ) )
         NoButton:SetImage( formImage( "radio" ) )
     end
-    ---
+    -- -
 
     -- Yes Label
     local YesLabel = vgui.Create( "DLabel", ButtonPanel )
@@ -186,7 +186,7 @@ local function makeBooleanField( question, parent )
         YesLabel:SetFontInternal( "Trebuchet24" )
         YesLabel:SetToFullHeight()
     end
-    ---
+    -- -
 
     -- No Button
     NoButton = vgui.Create( "DImageButton", ButtonPanel )
@@ -198,7 +198,7 @@ local function makeBooleanField( question, parent )
         NoButton:SetImage( formImage( "radio-filled" ) )
         YesButton:SetImage( formImage( "radio" ) )
     end
-    ---
+    -- -
 
     -- No Label
     local NoLabel = vgui.Create( "DLabel", ButtonPanel )
@@ -212,7 +212,7 @@ local function makeBooleanField( question, parent )
         NoLabel:SetFontInternal( "Trebuchet24" )
         NoLabel:SetToFullHeight()
     end
-    ---
+    -- -
 
     return ButtonPanel
 end
@@ -390,25 +390,25 @@ local function openForm( formData )
 
     BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
-        --local closeDuration = 0.5
-        --local closeSteps = 33
-        --local closeStep = 1
+        -- local closeDuration = 0.5
+        -- local closeSteps = 33
+        -- local closeStep = 1
 
-        --timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
+        -- timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
         --    local newAlpha =  0 * math.pow( 5, 10 * ( closeStep / closeSteps - 1 ) ) + 255;
         --    print( newAlpha )
         --    Form:SetAlpha( newAlpha )
 
         --    closeStep = closeStep + 1
-        --end )
+        -- end )
 
-        --timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
+        -- timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
             FormContainer:Close()
             CFCContactForms.openForms()
             timer.Remove( "CFC_FadeInForm" )
             timer.Remove( "CFC_FadeOutForm" )
             timer.Remove( "CFC_DelayCloseForm" )
-        --end )
+        -- end )
     end
 
     Form = vgui.Create( "DScrollPanel", FormContainer )
