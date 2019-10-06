@@ -4,8 +4,8 @@ util.AddNetworkString( 'CFC_SubmitBugReport' )
 util.AddNetworkString( 'CFC_SubmitPlayerReport' )
 
 local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
-FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\r", "")
-FORM_PROCESSOR_URL = string.Replace(FORM_PROCESSOR_URL, "\n", "")
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\r", "" )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\n", "" )
 
 local SUBMISSION_GROOM_INTERVAL = 60
 
@@ -13,7 +13,7 @@ local playerSubmissionCounts = {}
 
 local function serverLog( message )
     local prefix = "[CFC Contact Forms] "
-    print( prefix .. message)
+    print( prefix .. message )
 end
 
 local function alertPlayer( ply, message )
@@ -56,7 +56,7 @@ local function submitFormForPlayer( data, endpoint, ply )
             print( success )
         end,
         function( failure )
-            serverLog( "Request failed with data:")
+            serverLog( "Request failed with data:" )
             PrintTable( data )
             serverLog( failure )
         end
