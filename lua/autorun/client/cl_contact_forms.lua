@@ -185,7 +185,7 @@ local function makeBooleanField( question, parent )
         YesLabel:SetFontInternal( "Trebuchet24" )
         YesLabel:SetToFullHeight()
     end
-    -- -
+    ---
 
     -- No Button
     NoButton = vgui.Create( "DImageButton", ButtonPanel )
