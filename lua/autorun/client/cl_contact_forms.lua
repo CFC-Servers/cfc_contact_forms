@@ -211,7 +211,7 @@ local function makeBooleanField( question, parent )
         NoLabel:SetFontInternal( "Trebuchet24" )
         NoLabel:SetToFullHeight()
     end
-    -- -
+    ---
 
     return ButtonPanel
 end
