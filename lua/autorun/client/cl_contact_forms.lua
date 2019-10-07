@@ -197,7 +197,7 @@ local function makeBooleanField( question, parent )
         NoButton:SetImage( formImage( "radio-filled" ) )
         YesButton:SetImage( formImage( "radio" ) )
     end
-    -- -
+    ---
 
     -- No Label
     local NoLabel = vgui.Create( "DLabel", ButtonPanel )
