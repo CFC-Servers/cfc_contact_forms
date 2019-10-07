@@ -272,9 +272,9 @@ local function makeSlidingScaleField( question, parent, imageBase )
 
                 local image = formImage( imageBase, grayscale )
 
-                if InfantButton:GetImage() == image then continue end
-
-                InfantButton:SetImage( image, backupLabel )
+                if InfantButton:GetImage() ~= image then
+                    InfantButton:SetImage( image, backupLabel )
+                end
             end
         end
     end
