@@ -1,7 +1,6 @@
-local LEFT_BORDER = 10
 local Frame = nil
 
-local function makeFormButton(text, callback, parent)
+local function makeFormButton( text, callback, parent )
     local Button = vgui.Create( "DButton", parent )
 
     Button:SetFont( "Trebuchet24" )
@@ -49,7 +48,7 @@ local function processFieldsForForm( fields, formData )
         for _, fieldStruct in pairs( fields ) do
             local field = fieldStruct.field
 
-            print("Sending '" .. fieldStruct.name .. "' to the server..")
+            print( "Sending '" .. fieldStruct.name .. "' to the server .. " )
             net.WriteString( field:GetValue() )
         end
     net.SendToServer()
@@ -96,7 +95,7 @@ end
 surface.CreateFont( "CFCFormTitle", {
     font = "DermaLarge",
     size = 56
-})
+} )
 
 local function makeTitle( text, parent )
     local Title = vgui.Create( "DLabel", parent )
@@ -105,10 +104,10 @@ local function makeTitle( text, parent )
     Title:SetText( text )
     Title:SetContentAlignment( 5 )
     Title:SetWrap( false )
-    Title:Dock(TOP)
+    Title:Dock( TOP )
     Title:DockMargin( 0, 10, 0, 30 )
 
-    function Title:PerformLayout(w1, w2)
+    function Title:PerformLayout( w1, w2 )
         Title:SetFGColor( Color( 255, 255, 255, 255 ) )
         Title:SetFontInternal( "CFCFormTitle" )
         Title:SetToFullHeight()
@@ -121,14 +120,14 @@ local function makeTextField( question, parent )
     local query = question.query
     makeLabel( query, parent )
 
-    local TextFieldContainer = vgui.Create("DPanel", parent )
+    local TextFieldContainer = vgui.Create( "DPanel", parent )
     TextFieldContainer:Dock( TOP )
     TextFieldContainer:DockMargin( 0, 15, 0, 0 )
     TextFieldContainer:SetHeight( 200 )
 
     function TextFieldContainer:Paint( w, h )
         surface.SetDrawColor( Color( 44, 48, 74 ) )
-        surface.DrawRect(0, 0, w, h)
+        surface.DrawRect( 0, 0, w, h )
     end
 
     local TextField = vgui.Create( "DTextEntry", TextFieldContainer )
@@ -136,7 +135,7 @@ local function makeTextField( question, parent )
     TextField:SetMultiline( true )
     TextField:SetWrap( true )
     TextField:SetTextColor( Color( 255, 255, 255, 255 ) )
-    TextField:SetCursorColor(Color(255,255,255))
+    TextField:SetCursorColor( Color( 255, 255, 255 ) )
     TextField:SetFont( "Trebuchet24" )
 
     TextField:SetUpdateOnType( true )
@@ -252,11 +251,11 @@ local function makeSlidingScaleField( question, parent, imageBase )
         return ButtonPanel.selectedValue
     end
 
-    for i=1, 5 do
-        local backupLabel = "Select: " .. i
+    for i = 1, 5 do
+        local outerBackupLabel = "Select: " .. i
         local Button = vgui.Create( "DImageButton", ButtonPanel )
         Button:SetSize( 60, 60 )
-        Button:SetImage( formImage( imageBase, true ), backupLabel )
+        Button:SetImage( formImage( imageBase, true ), outerBackupLabel )
         Button:DockMargin( 0, 0, 5, 0 )
         Button:Dock( LEFT )
         Button.DoClick = function()
@@ -391,25 +390,25 @@ local function openForm( formData )
 
     BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
-        --local closeDuration = 0.5
-        --local closeSteps = 33
-        --local closeStep = 1
+        -- local closeDuration = 0.5
+        -- local closeSteps = 33
+        -- local closeStep = 1
 
-        --timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
+        -- timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
         --    local newAlpha =  0 * math.pow( 5, 10 * ( closeStep / closeSteps - 1 ) ) + 255;
-        --    print(newAlpha)
+        --    print( newAlpha )
         --    Form:SetAlpha( newAlpha )
 
         --    closeStep = closeStep + 1
-        --end )
+        -- end )
 
-        --timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
+        -- timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
             FormContainer:Close()
             CFCContactForms.openForms()
             timer.Remove( "CFC_FadeInForm" )
             timer.Remove( "CFC_FadeOutForm" )
             timer.Remove( "CFC_DelayCloseForm" )
-        --end )
+        -- end )
     end
 
     Form = vgui.Create( "DScrollPanel", FormContainer )
@@ -431,7 +430,7 @@ local function openForm( formData )
     local step = 1
 
     timer.Create( "CFC_FadeInForm", duration / steps, steps, function()
-        local newAlpha =  255 * math.pow( 5, 10 * ( step/steps - 1 ) );
+        local newAlpha =  255 * math.pow( 5, 10 * ( step / steps - 1 ) );
         Form:SetAlpha( newAlpha )
 
         step = step + 1
