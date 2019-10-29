@@ -43,7 +43,7 @@ local function playerCanSubmit( ply )
 end
 
 local function submitFormForPlayer( data, endpoint, ply )
-    local plyName = ply and ply:GetName() or "Unknown Player"
+    local plyName = ply and ply:GetName() or 'Unknown Player'
     
     data['realm'] = 'CFC3'
 
