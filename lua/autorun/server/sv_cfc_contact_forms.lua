@@ -70,6 +70,7 @@ local function submitContactForm( len, ply )
     local message = net.ReadString()
 
     local data = {}
+    data['realm'] = "CFC3"
     data['steam_id'] = ply:SteamID()
     data['steam_name'] = ply:GetName()
     data['contact_method'] = contactMethod
@@ -84,6 +85,7 @@ local function submitFeedbackForm( len, ply )
     local message = net.ReadString()
 
     local data = {}
+    data['realm'] = "CFC3"
     data['steam_id'] = ply:SteamID()
     data['steam_name'] = ply:GetName()
     data['rating'] = rating
@@ -98,6 +100,7 @@ local function submitBugReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
+    data['realm'] = "CFC3"
     data['steam_id'] = ply:SteamID()
     data['steam_name'] = ply:GetName()
     data['urgency'] = urgency
@@ -112,6 +115,7 @@ local function submitPlayerReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
+    data['realm'] = "CFC3"
     data['steam_id'] = ply:SteamID()
     data['steam_name'] = ply:GetName()
     data['reported_steam_id'] = reportedSteamID
