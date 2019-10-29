@@ -225,8 +225,9 @@ local function makePlayerDropdownField( question, parent )
     ComboBox:Dock( TOP )
 
     for _, ply in pairs( player.GetAll() ) do
-        if ply == LocalPlayer() then continue end
-        ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
+        if ply ~= LocalPlayer() then
+            ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
+        end
     end
 
     ComboBox.GetValue = function()
