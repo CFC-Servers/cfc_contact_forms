@@ -1,4 +1,3 @@
-local LEFT_BORDER = 10
 local Frame = nil
 
 local function makeFormButton( text, callback, parent )
@@ -225,8 +224,9 @@ local function makePlayerDropdownField( question, parent )
     ComboBox:Dock( TOP )
 
     for _, ply in pairs( player.GetAll() ) do
-        if ply == LocalPlayer() then continue end
-        ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
+        if ply ~= LocalPlayer() then
+            ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
+        end
     end
 
     ComboBox.GetValue = function()
@@ -252,10 +252,10 @@ local function makeSlidingScaleField( question, parent, imageBase )
     end
 
     for i = 1, 5 do
-        local backupLabel = "Select: " .. i
+        local outerBackupLabel = "Select: " .. i
         local Button = vgui.Create( "DImageButton", ButtonPanel )
         Button:SetSize( 60, 60 )
-        Button:SetImage( formImage( imageBase, true ), backupLabel )
+        Button:SetImage( formImage( imageBase, true ), outerBackupLabel )
         Button:DockMargin( 0, 0, 5, 0 )
         Button:Dock( LEFT )
         Button.DoClick = function()
@@ -271,9 +271,9 @@ local function makeSlidingScaleField( question, parent, imageBase )
 
                 local image = formImage( imageBase, grayscale )
 
-                if InfantButton:GetImage() == image then continue end
-
-                InfantButton:SetImage( image, backupLabel )
+                if InfantButton:GetImage() ~= image then
+                    InfantButton:SetImage( image, backupLabel )
+                end
             end
         end
     end
@@ -430,7 +430,7 @@ local function openForm( formData )
     local step = 1
 
     timer.Create( "CFC_FadeInForm", duration / steps, steps, function()
-        local newAlpha =  255 * math.pow( 5, 10 * ( step/steps - 1 ) );
+        local newAlpha =  255 * math.pow( 5, 10 * ( step / steps - 1 ) );
         Form:SetAlpha( newAlpha )
 
         step = step + 1
