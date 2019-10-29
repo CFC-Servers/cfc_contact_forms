@@ -3,21 +3,21 @@ util.AddNetworkString( 'CFC_SubmitFeedbackForm' )
 util.AddNetworkString( 'CFC_SubmitBugReport' )
 util.AddNetworkString( 'CFC_SubmitPlayerReport' )
 
-local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\r", "" )
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\n", "" )
+local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
 
 local SUBMISSION_GROOM_INTERVAL = 60
 
 local playerSubmissionCounts = {}
 
 local function serverLog( message )
-    local prefix = "[CFC Contact Forms] "
+    local prefix = '[CFC Contact Forms] '
     print( prefix .. message )
 end
 
 local function alertPlayer( ply, message )
-  local prefix = "[CFC Contact Forms] "
+  local prefix = '[CFC Contact Forms] '
   ply:ChatPrint( prefix .. message )
 end
 
@@ -30,7 +30,7 @@ local function groomSubmissionCounts()
         end
     end
 end
-timer.Create( "CFC_GroomFormSubmissions", SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
+timer.Create( 'CFC_GroomFormSubmissions', SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
 
 local function recordPlayerSubmission( ply )
     local count = playerSubmissionCounts[ply] or 0
@@ -43,12 +43,12 @@ local function playerCanSubmit( ply )
 end
 
 local function submitFormForPlayer( data, endpoint, ply )
-    local plyName = ply and ply:GetName() or "Unknown Player"
+    local plyName = ply and ply:GetName() or 'Unknown Player'
 
-    serverLog( "Sending request for <" .. plyName .. "> with form data: " )
+    serverLog( 'Sending request for <' .. plyName .. '> with form data: ' )
     PrintTable( data )
 
-    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
+    if not playerCanSubmit( ply ) then return alertPlayer( ply, 'You\'re doing that too much! Please wait or reach out on our discord' ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
     http.Post( url, data,
@@ -56,7 +56,7 @@ local function submitFormForPlayer( data, endpoint, ply )
             print( success )
         end,
         function( failure )
-            serverLog( "Request failed with data:" )
+            serverLog( 'Request failed with data:' )
             PrintTable( data )
             serverLog( failure )
         end
