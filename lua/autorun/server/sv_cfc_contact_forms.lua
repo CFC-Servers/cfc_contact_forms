@@ -45,6 +45,8 @@ end
 local function submitFormForPlayer( data, endpoint, ply )
     local plyName = ply and ply:GetName() or 'Unknown Player'
 
+    data['realm'] = 'CFC3'
+
     serverLog( 'Sending request for <' .. plyName .. '> with form data: ' )
     PrintTable( data )
 
