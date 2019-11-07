@@ -40,7 +40,7 @@ local function getPlayerCounts()
         if IsValid( ent ) then
             local className = ent:GetClass()
             local entOwner = ent:CPPIGetOwner() or ent:GetOwner()
-            local ownerId = ( entOwner:IsPlayer() and entOwner:SteamID64() ) or "world"
+            local ownerId = ( entOwner:IsPlayer() and entOwner:SteamID64() ) or 'world'
 
             playerCounts[ownerId] = playerCounts[ownerId] or {}
             playerCounts[ownerId][className] = ( playerCounts[ownerId][className] or 0 ) + 1
@@ -53,10 +53,10 @@ end
 local function getE2Information()
     local playerE2Info = {}
 
-    for _, expression2 in pairs( ents.FindByClass( "gmod_wire_expression2" ) ) do
+    for _, expression2 in pairs( ents.FindByClass( 'gmod_wire_expression2' ) ) do
         if IsValid( expression2 ) then
             local e2Owner = expression2:CPPIGetOwner()
-            local ownerId = ( e2Owner:IsPlayer() and e2Owner:SteamID64() ) or "world"
+            local ownerId = ( e2Owner:IsPlayer() and e2Owner:SteamID64() ) or 'world'
 
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
@@ -98,10 +98,10 @@ end
 local function getDebugInformation()
     local debugInformation = {}
 
-    debugInformation["counts"] = getPlayerCounts()
-    debugInformation["E2Info"] = getE2Information()
-    debugInformation["playerInfo"] = getPlayersInfo()
-    debugInformation["serverInfo"] = getServerInfo()
+    debugInformation['counts'] = getPlayerCounts()
+    debugInformation['E2Info'] = getE2Information()
+    debugInformation['playerInfo'] = getPlayersInfo()
+    debugInformation['serverInfo'] = getServerInfo()
 
     return util.TableToJSON( debugInformation )
 end
