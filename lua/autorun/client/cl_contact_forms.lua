@@ -30,7 +30,8 @@ FORM_TYPE_TO_NETSTRING = {
     [ "contact" ] = "CFC_SubmitContactForm",
     [ "feedback" ] = "CFC_SubmitFeedbackForm",
     [ "bug-report" ] = "CFC_SubmitBugReport",
-    [ "player-report" ] = "CFC_SubmitPlayerReport"
+    [ "player-report" ] = "CFC_SubmitPlayerReport",
+    [ "freeze-report" ] = "CFC_SubmitFreezeReport"
 }
 
 local function formImage( imageBase, shouldGrayscale )
@@ -615,6 +616,34 @@ local function openPlayerReportForm()
 
     local message = {}
     message.query = "Please describe the situation in detail. If you've gathered some, please share links containing evidence of wrongdoing."
+    message.name = "message"
+    message.fieldType = "text"
+    table.insert( questions, message )
+
+    formData.questions = questions
+
+    openForm( formData )
+end
+
+local function openFreezeReportForm()
+    local formData = {}
+    formData.title = "Freeze Report"
+    formData.formType = "freeze-report"
+
+    formData.headerText = {
+        "Are you experiencing freezing? Please tell us about it!"
+    }
+
+    local questions = {}
+
+    local severity = {}
+    severity.query = "How severe is the freezing?"
+    severity.name = "severity"
+    severity.fieldType = "urgency"
+    table.insert( questions, severity )
+
+    local message = {}
+    message.query = "Please share any additional comments, the more information the better!"
     message.name = "message"
     message.fieldType = "text"
     table.insert( questions, message )
