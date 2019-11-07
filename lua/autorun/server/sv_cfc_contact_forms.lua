@@ -70,11 +70,38 @@ local function getE2Information()
     return playerE2Info
 end
 
+local function getPlayersInfo()
+    local playersInfo = {}
+
+    for _, ply in pairs( player.GetAll() ) do
+        local playerInfo = {}
+        playerInfo.name = ply:GetName()
+        playerInfo.pos = tostring( ply:GetPos() )
+        playerInfo.ping = ply:Ping()
+        playerInfo.packetloss = ply:PacketLoss()
+
+        local playerId = ply:SteamID64()
+        playersInfo[playerId] = playerInfo
+    end
+
+    return playersInfo
+end
+
+local function getServerInfo()
+    local serverInfo = {}
+    serverInfo.uptime = SysTime()
+    serverInfo.ticktime = 1 / FrameTime()
+
+    return serverInfo
+end
+
 local function getDebugInformation()
     local debugInformation = {}
 
     debugInformation["counts"] = getPlayerCounts()
     debugInformation["E2Info"] = getE2Information()
+    debugInformation["playerInfo"] = getPlayersInfo()
+    debugInformation["serverInfo"] = getServerInfo()
 
     return util.TableToJSON( debugInformation )
 end

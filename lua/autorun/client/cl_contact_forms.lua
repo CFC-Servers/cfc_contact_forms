@@ -685,6 +685,7 @@ CFCContactForms.openForms = function()
     makeFormButton( "Feedback", openFeedbackForm, Pane )
     makeFormButton( "Bug Report", openBugReportForm, Pane )
     makeFormButton( "Player Report", openPlayerReportForm, Pane )
+    makeFormButton( "Freeze Report", openFreezeReportForm, Pane )
 end
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
