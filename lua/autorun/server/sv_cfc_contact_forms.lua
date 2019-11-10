@@ -61,9 +61,9 @@ local function getE2Information()
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
             e2Info.size = expression2:GetCode():len()
+            e2Info.owner = ownerId
 
-            playerE2Info[ownerId] = playerE2Info[ownerId] or {}
-            table.insert( playerE2Info[ownerId], e2Info )
+            table.insert( playerE2Info, e2Info )
         end
     end
 
