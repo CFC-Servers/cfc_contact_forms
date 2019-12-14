@@ -30,7 +30,8 @@ FORM_TYPE_TO_NETSTRING = {
     [ "contact" ] = "CFC_SubmitContactForm",
     [ "feedback" ] = "CFC_SubmitFeedbackForm",
     [ "bug-report" ] = "CFC_SubmitBugReport",
-    [ "player-report" ] = "CFC_SubmitPlayerReport"
+    [ "player-report" ] = "CFC_SubmitPlayerReport",
+    [ "staff-report" ] = "CFC_SubmitStaffReport"
 }
 
 local function formImage( imageBase, shouldGrayscale )
@@ -216,14 +217,14 @@ local function makeBooleanField( question, parent )
     return ButtonPanel
 end
 
-local function makePlayerDropdownField( question, parent )
+local function makePlayerDropdownField( question, parent, givenPlayers )
     local query = question.query
     makeLabel( query, parent )
 
     local ComboBox = vgui.Create( "DComboBox", parent )
     ComboBox:Dock( TOP )
 
-    for _, ply in pairs( player.GetAll() ) do
+    for _, ply in pairs( givenPlayers ) do
         if ply ~= LocalPlayer() then
             ComboBox:AddChoice( ply:GetName(), ply:SteamID() )
         end
@@ -236,6 +237,32 @@ local function makePlayerDropdownField( question, parent )
 
 
     return ComboBox
+end
+
+local function makeAllPlayerDropdownField( question, parent )
+    local plys = {}
+    for _, ply in pairs( player.GetAll() ) do
+        if ply ~= LocalPlayer() then table.insert( plys, ply ) end
+    end
+
+    return makePlayerDropdownField( question, parent, plys )
+end
+
+local function makeStaffDropDownField( question, parent )
+    local plys = {}
+
+    local isStaff = {
+        ["sentinel"] = true,
+        ["moderator"] = true,
+        ["admin"] = true,
+        ["owner"] = true
+    }
+
+    for _, ply in pairs( player.GetAll() ) do
+        if isStaff[ply:GetUserGroup()] then table.insert( plys, ply ) end
+    end
+
+    return makePlayerDropdownField( question, parent, plys )
 end
 
 local function makeSlidingScaleField( question, parent, imageBase )
@@ -303,7 +330,11 @@ local function makeFormField( ... )
     end
 
     if fieldType == "player-dropdown" then
-        return makePlayerDropdownField( ... )
+        return makeAllPlayerDropdownField( ... )
+    end
+
+    if fieldType == "staff-dropdown" then
+        return makeStaffDropDownField( ... )
     end
 
     if fieldType == "urgency" then
@@ -624,6 +655,42 @@ local function openPlayerReportForm()
     openForm( formData )
 end
 
+local function openStaffReportForm()
+    local formData = {}
+    formData.title = "Staff Report"
+    formData.formType = "staff-report"
+
+    formData.headerText = {
+        "Is a staff member breaking the rules?",
+        "You can report them anonymously so that we can take action as fast as possible!",
+        "Please, only one staff member per report!"
+    }
+
+    local questions = {}
+
+    local reportedStaff = {}
+    reportedStaff.query = "Please select the staff member you wish to report."
+    reportedStaff.name = "reportedPlayer"
+    reportedStaff.fieldType = "staff-dropdown"
+    table.insert( questions, reportedStaff )
+
+    local urgency = {}
+    urgency.query = "How urgent is this situation?"
+    urgency.name = "urgency"
+    urgency.fieldType = "urgency"
+    table.insert( questions, urgency )
+
+    local message = {}
+    message.query = "Please describe the situation in detail. If you've gathered some, please share links containing evidence of wrongdoing."
+    message.name = "message"
+    message.fieldType = "text"
+    table.insert( questions, message )
+
+    formData.questions = questions
+
+    openForm( formData )
+end
+
 CFCContactForms = CFCContactForms or {}
 
 CFCContactForms.openForms = function()
@@ -656,6 +723,7 @@ CFCContactForms.openForms = function()
     makeFormButton( "Feedback", openFeedbackForm, Pane )
     makeFormButton( "Bug Report", openBugReportForm, Pane )
     makeFormButton( "Player Report", openPlayerReportForm, Pane )
+    makeFormButton( "Staff Report", openStaffReportForm, Pane )
 end
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
