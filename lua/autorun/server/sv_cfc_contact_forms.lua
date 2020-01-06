@@ -2,6 +2,7 @@ util.AddNetworkString( 'CFC_SubmitContactForm' )
 util.AddNetworkString( 'CFC_SubmitFeedbackForm' )
 util.AddNetworkString( 'CFC_SubmitBugReport' )
 util.AddNetworkString( 'CFC_SubmitPlayerReport' )
+util.AddNetworkString( 'CFC_SubmitFreezeReport' )
 util.AddNetworkString( 'CFC_SubmitStaffReport' )
 
 local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
@@ -32,6 +33,79 @@ local function groomSubmissionCounts()
     end
 end
 timer.Create( 'CFC_GroomFormSubmissions', SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
+
+local function getPlayerCounts()
+    local playerCounts = {}
+
+    for _, ent in pairs( ents.GetAll() ) do
+        if IsValid( ent ) then
+            local className = ent:GetClass()
+            local entOwner = ent:CPPIGetOwner() or ent:GetOwner()
+            local ownerId = ( entOwner and entOwner:IsPlayer() and entOwner:SteamID64() ) or 'world'
+
+            playerCounts[ownerId] = playerCounts[ownerId] or {}
+            playerCounts[ownerId][className] = ( playerCounts[ownerId][className] or 0 ) + 1
+        end
+    end
+
+    return playerCounts
+end
+
+local function getE2Information()
+    local playerE2Info = {}
+
+    for _, expression2 in pairs( ents.FindByClass( 'gmod_wire_expression2' ) ) do
+        if IsValid( expression2 ) then
+            local e2Owner = expression2:CPPIGetOwner()
+            local ownerId = ( e2Owner and e2Owner:IsPlayer() and e2Owner:SteamID64() ) or 'world'
+
+            local e2Info = {}
+            e2Info.name = expression2:GetGateName()
+            e2Info.size = expression2:GetCode():len()
+            e2Info.owner = ownerId
+
+            table.insert( playerE2Info, e2Info )
+        end
+    end
+
+    return playerE2Info
+end
+
+local function getPlayersInfo()
+    local playersInfo = {}
+
+    for _, ply in pairs( player.GetAll() ) do
+        local playerInfo = {}
+        playerInfo.name = ply:GetName()
+        playerInfo.pos = tostring( ply:GetPos() )
+        playerInfo.ping = ply:Ping()
+        playerInfo.packetloss = ply:PacketLoss()
+
+        local playerId = ply:SteamID64()
+        playersInfo[playerId] = playerInfo
+    end
+
+    return playersInfo
+end
+
+local function getServerInfo()
+    local serverInfo = {}
+    serverInfo.uptime = SysTime()
+    serverInfo.ticktime = 1 / FrameTime()
+
+    return serverInfo
+end
+
+local function getDebugInformation()
+    local debugInformation = {}
+
+    debugInformation['counts'] = getPlayerCounts()
+    debugInformation['E2Info'] = getE2Information()
+    debugInformation['playerInfo'] = getPlayersInfo()
+    debugInformation['serverInfo'] = getServerInfo()
+
+    return util.TableToJSON( debugInformation )
+end
 
 local function recordPlayerSubmission( ply )
     local count = playerSubmissionCounts[ply] or 0
@@ -139,8 +213,23 @@ local function submitStaffReport( len, ply )
     submitFormForPlayer( data, 'staff-report', ply )
 end
 
+local function submitFreezeReport( len, ply )
+    local severity = net.ReadString()
+    local message = net.ReadString()
+
+    local data = {}
+    data['steam_id'] = ply:SteamID()
+    data['steam_name'] = ply:GetName()
+    data['debug_information'] = getDebugInformation()
+    data['severity'] = severity
+    data['message'] = message
+
+    submitFormForPlayer( data, 'freeze-report', ply )
+end
+
 net.Receive( 'CFC_SubmitContactForm', submitContactForm )
 net.Receive( 'CFC_SubmitFeedbackForm', submitFeedbackForm )
 net.Receive( 'CFC_SubmitBugReport', submitBugReport )
 net.Receive( 'CFC_SubmitPlayerReport', submitPlayerReport )
+net.Receive( 'CFC_SubmitFreezeReport', submitFreezeReport )
 net.Receive( 'CFC_SubmitStaffReport', submitStaffReport )
