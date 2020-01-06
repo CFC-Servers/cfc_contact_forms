@@ -3,6 +3,7 @@ util.AddNetworkString( 'CFC_SubmitFeedbackForm' )
 util.AddNetworkString( 'CFC_SubmitBugReport' )
 util.AddNetworkString( 'CFC_SubmitPlayerReport' )
 util.AddNetworkString( 'CFC_SubmitFreezeReport' )
+util.AddNetworkString( 'CFC_SubmitStaffReport' )
 
 local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
@@ -198,6 +199,20 @@ local function submitPlayerReport( len, ply )
     submitFormForPlayer( data, 'player-report', ply )
 end
 
+local function submitStaffReport( len, ply )
+    local reportedSteamID = net.ReadString()
+    local urgency = net.ReadString()
+    local message = net.ReadString()
+
+    local data = {}
+    data['reported_steam_id'] = reportedSteamID
+    data['reported_steam_name'] = player.GetBySteamID( reportedSteamID ):GetName()
+    data['urgency'] = urgency
+    data['message'] = message
+
+    submitFormForPlayer( data, 'staff-report', ply )
+end
+
 local function submitFreezeReport( len, ply )
     local severity = net.ReadString()
     local message = net.ReadString()
@@ -217,3 +232,4 @@ net.Receive( 'CFC_SubmitFeedbackForm', submitFeedbackForm )
 net.Receive( 'CFC_SubmitBugReport', submitBugReport )
 net.Receive( 'CFC_SubmitPlayerReport', submitPlayerReport )
 net.Receive( 'CFC_SubmitFreezeReport', submitFreezeReport )
+net.Receive( 'CFC_SubmitStaffReport', submitStaffReport )
