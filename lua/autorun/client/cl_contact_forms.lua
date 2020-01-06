@@ -26,12 +26,19 @@ local function makeFormButton( text, callback, parent )
     return Button
 end
 
-FORM_TYPE_TO_NETSTRING = {
+local FORM_TYPE_TO_NETSTRING = {
     [ "contact" ] = "CFC_SubmitContactForm",
     [ "feedback" ] = "CFC_SubmitFeedbackForm",
     [ "bug-report" ] = "CFC_SubmitBugReport",
     [ "player-report" ] = "CFC_SubmitPlayerReport",
     [ "staff-report" ] = "CFC_SubmitStaffReport"
+}
+
+local IS_STAFF = {
+    ["sentinel"] = true,
+    ["moderator"] = true,
+    ["admin"] = true,
+    ["owner"] = true
 }
 
 local function formImage( imageBase, shouldGrayscale )
@@ -251,15 +258,8 @@ end
 local function makeStaffDropDownField( question, parent )
     local plys = {}
 
-    local isStaff = {
-        ["sentinel"] = true,
-        ["moderator"] = true,
-        ["admin"] = true,
-        ["owner"] = true
-    }
-
     for _, ply in pairs( player.GetAll() ) do
-        if isStaff[ply:GetUserGroup()] then table.insert( plys, ply ) end
+        if IS_STAFF[ply:GetUserGroup()] then table.insert( plys, ply ) end
     end
 
     return makePlayerDropdownField( question, parent, plys )
