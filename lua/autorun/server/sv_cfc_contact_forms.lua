@@ -41,7 +41,7 @@ local function getPlayerCounts()
         if IsValid( ent ) then
             local className = ent:GetClass()
             local entOwner = ent:CPPIGetOwner() or ent:GetOwner()
-            local ownerId = ( entOwner and entOwner:IsPlayer() and entOwner:SteamID64() ) or 'world'
+            local ownerId = ( entOwner and entOwner:IsPlayer() and entOwner:SteamID() ) or 'world'
 
             playerCounts[ownerId] = playerCounts[ownerId] or {}
             playerCounts[ownerId][className] = ( playerCounts[ownerId][className] or 0 ) + 1
@@ -57,7 +57,7 @@ local function getE2Information()
     for _, expression2 in pairs( ents.FindByClass( 'gmod_wire_expression2' ) ) do
         if IsValid( expression2 ) then
             local e2Owner = expression2:CPPIGetOwner()
-            local ownerId = ( e2Owner and e2Owner:IsPlayer() and e2Owner:SteamID64() ) or 'world'
+            local ownerId = ( e2Owner and e2Owner:IsPlayer() and e2Owner:SteamID() ) or 'world'
 
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
@@ -81,7 +81,7 @@ local function getPlayersInfo()
         playerInfo.ping = ply:Ping()
         playerInfo.packetloss = ply:PacketLoss()
 
-        local playerId = ply:SteamID64()
+        local playerId = ply:SteamID()
         playersInfo[playerId] = playerInfo
     end
 
