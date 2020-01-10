@@ -39,6 +39,8 @@ local IS_STAFF = {
     ["sentinel"] = true,
     ["moderator"] = true,
     ["admin"] = true,
+    ["superadmin"] = true,
+    ["developer"] = true,
     ["owner"] = true
 }
 
