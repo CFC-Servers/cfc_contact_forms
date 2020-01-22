@@ -57,7 +57,7 @@ local function getE2Information()
     for _, expression2 in pairs( ents.FindByClass( 'gmod_wire_expression2' ) ) do
         if IsValid( expression2 ) then
             local e2Owner = expression2:CPPIGetOwner()
-            local ownerId = ( e2Owner and IsValid( entOwner ) and e2Owner:IsPlayer() and e2Owner:SteamID() ) or 'world'
+            local ownerId = ( e2Owner and IsValid( e2Owner ) and e2Owner:IsPlayer() and e2Owner:SteamID() ) or 'world'
 
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
