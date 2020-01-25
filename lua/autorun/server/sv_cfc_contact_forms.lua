@@ -62,7 +62,7 @@ local function getE2Information()
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
             e2Info.size = expression2:GetCode():len()
-            e2Info.cpuTime = expression2.context.timebench
+            e2Info.cpuTime = expression2.context and expression2.context.timebench or 0
             e2Info.owner = ownerId
 
             table.insert( playerE2Info, e2Info )
