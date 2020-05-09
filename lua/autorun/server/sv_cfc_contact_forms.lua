@@ -9,6 +9,10 @@ local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
 
+local REALM = file.Read( 'cfc/realm.txt', 'DATA' )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
+
 local SUBMISSION_GROOM_INTERVAL = 60
 
 local playerSubmissionCounts = {}
@@ -120,7 +124,7 @@ end
 local function submitFormForPlayer( data, endpoint, ply )
     local plyName = ply and ply:GetName() or 'Unknown Player'
 
-    data['realm'] = 'CFC3'
+    data['realm'] = REALM
 
     serverLog( 'Sending request for <' .. plyName .. '> with form data: ' )
     PrintTable( data )

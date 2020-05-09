@@ -178,7 +178,7 @@ local function makeBooleanField( question, parent )
     YesButton:SetImage( formImage( "radio" ) )
     YesButton:Dock( LEFT )
     YesButton.DoClick = function()
-        ButtonPanel.selectedValue = "yes"
+        ButtonPanel.selectedValue = "true"
         YesButton:SetImage( formImage( "radio-filled" ) )
         NoButton:SetImage( formImage( "radio" ) )
     end
@@ -204,7 +204,7 @@ local function makeBooleanField( question, parent )
     NoButton:SetImage( formImage( "radio" ) )
     NoButton:Dock( LEFT )
     NoButton.DoClick = function()
-        ButtonPanel.selectedValue = "no"
+        ButtonPanel.selectedValue = "false"
         NoButton:SetImage( formImage( "radio-filled" ) )
         YesButton:SetImage( formImage( "radio" ) )
     end
