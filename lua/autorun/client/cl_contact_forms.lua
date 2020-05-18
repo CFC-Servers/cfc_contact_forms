@@ -722,7 +722,13 @@ local function openFreezeReportForm()
     openForm( formData )
 end
 
-CFCContactForms = CFCContactForms or {}
+CFCContactForms = {}
+
+CFCContactForms.openCommands = {
+    contact = true,
+    report = true,
+    feedback = true
+}
 
 CFCContactForms.openForms = function()
     local x = 400
@@ -757,5 +763,24 @@ CFCContactForms.openForms = function()
     makeFormButton( "Freeze Report", openFreezeReportForm, Pane )
     makeFormButton( "Staff Report", openStaffReportForm, Pane )
 end
+
+function CFCContactForms:isOpenCommand( msg )
+    if string.Explode( "", msg )[1] ~= "!" then return false end
+
+    msg = string.Replace( msg, "!", "" )
+
+    return self.openCommands[msg] or false
+end
+
+hook.Add( "OnPlayerChat", "CFC_ContactForms_OpenFormCommand", function( ply, msg )
+    if not CFCContactForms:isOpenCommand( msg ) then return end
+
+    if ply == LocalPlayer() then
+        CFCContactForms.openForms()
+    end
+
+    -- Suppress message
+    return true
+end )
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )

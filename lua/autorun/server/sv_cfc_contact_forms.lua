@@ -6,10 +6,18 @@ util.AddNetworkString( 'CFC_SubmitFreezeReport' )
 util.AddNetworkString( 'CFC_SubmitStaffReport' )
 
 local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
+if not FORM_PROCESSOR_URL or FORM_PROCESSOR_URL == "" then
+    error( "[CFC Contact Forms] Couldn't find cfc/contact/url.txt or file was empty - cannot start" )
+end
+
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
 
 local REALM = file.Read( 'cfc/realm.txt', 'DATA' )
+if not REALM or REALM == "" then
+    error( "[CFC Contact Forms] Couldn't find cfc/realm.txt or file was empty - cannot start" )
+end
+
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
 FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
 
