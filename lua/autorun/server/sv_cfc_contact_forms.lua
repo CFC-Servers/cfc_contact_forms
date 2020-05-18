@@ -18,8 +18,8 @@ if not REALM or REALM == "" then
     error( "[CFC Contact Forms] Couldn't find cfc/realm.txt or file was empty - cannot start" )
 end
 
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
+REALM = string.Replace( REALM, '\r', '' )
+REALM = string.Replace( REALM, '\n', '' )
 
 local SUBMISSION_GROOM_INTERVAL = 60
 
