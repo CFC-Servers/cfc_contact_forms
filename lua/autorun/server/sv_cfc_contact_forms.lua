@@ -1,37 +1,37 @@
-util.AddNetworkString( 'CFC_SubmitContactForm' )
-util.AddNetworkString( 'CFC_SubmitFeedbackForm' )
-util.AddNetworkString( 'CFC_SubmitBugReport' )
-util.AddNetworkString( 'CFC_SubmitPlayerReport' )
-util.AddNetworkString( 'CFC_SubmitFreezeReport' )
-util.AddNetworkString( 'CFC_SubmitStaffReport' )
+util.AddNetworkString( "CFC_SubmitContactForm" )
+util.AddNetworkString( "CFC_SubmitFeedbackForm" )
+util.AddNetworkString( "CFC_SubmitBugReport" )
+util.AddNetworkString( "CFC_SubmitPlayerReport" )
+util.AddNetworkString( "CFC_SubmitFreezeReport" )
+util.AddNetworkString( "CFC_SubmitStaffReport" )
 
-local FORM_PROCESSOR_URL = file.Read( 'cfc/contact/url.txt', 'DATA' )
+local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
 if not FORM_PROCESSOR_URL or FORM_PROCESSOR_URL == "" then
     error( "[CFC Contact Forms] Couldn't find cfc/contact/url.txt or file was empty - cannot start" )
 end
 
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\r', '' )
-FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, '\n', '' )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\r", "" )
+FORM_PROCESSOR_URL = string.Replace( FORM_PROCESSOR_URL, "\n", "" )
 
-local REALM = file.Read( 'cfc/realm.txt', 'DATA' )
+local REALM = file.Read( "cfc/realm.txt", "DATA" )
 if not REALM or REALM == "" then
     error( "[CFC Contact Forms] Couldn't find cfc/realm.txt or file was empty - cannot start" )
 end
 
-REALM = string.Replace( REALM, '\r', '' )
-REALM = string.Replace( REALM, '\n', '' )
+REALM = string.Replace( REALM, "\r", "" )
+REALM = string.Replace( REALM, "\n", "" )
 
 local SUBMISSION_GROOM_INTERVAL = 60
 
 local playerSubmissionCounts = {}
 
 local function serverLog( message )
-    local prefix = '[CFC Contact Forms] '
+    local prefix = "[CFC Contact Forms] "
     print( prefix .. message )
 end
 
 local function alertPlayer( ply, message )
-  local prefix = '[CFC Contact Forms] '
+  local prefix = "[CFC Contact Forms] "
   ply:ChatPrint( prefix .. message )
 end
 
@@ -44,7 +44,7 @@ local function groomSubmissionCounts()
         end
     end
 end
-timer.Create( 'CFC_GroomFormSubmissions', SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
+timer.Create( "CFC_GroomFormSubmissions", SUBMISSION_GROOM_INTERVAL, 0, groomSubmissionCounts )
 
 local function getPlayerCounts()
     local playerCounts = {}
@@ -53,7 +53,7 @@ local function getPlayerCounts()
         if IsValid( ent ) then
             local className = ent:GetClass()
             local entOwner = ent:CPPIGetOwner() or ent:GetOwner()
-            local ownerId = ( entOwner and IsValid( entOwner ) and entOwner:IsPlayer() and entOwner:SteamID() ) or 'world'
+            local ownerId = ( entOwner and IsValid( entOwner ) and entOwner:IsPlayer() and entOwner:SteamID() ) or "world"
 
             playerCounts[ownerId] = playerCounts[ownerId] or {}
             playerCounts[ownerId][className] = ( playerCounts[ownerId][className] or 0 ) + 1
@@ -66,10 +66,10 @@ end
 local function getE2Information()
     local playerE2Info = {}
 
-    for _, expression2 in pairs( ents.FindByClass( 'gmod_wire_expression2' ) ) do
+    for _, expression2 in pairs( ents.FindByClass( "gmod_wire_expression2" ) ) do
         if IsValid( expression2 ) then
             local e2Owner = expression2:CPPIGetOwner()
-            local ownerId = ( e2Owner and IsValid( e2Owner ) and e2Owner:IsPlayer() and e2Owner:SteamID() ) or 'world'
+            local ownerId = ( e2Owner and IsValid( e2Owner ) and e2Owner:IsPlayer() and e2Owner:SteamID() ) or "world"
 
             local e2Info = {}
             e2Info.name = expression2:GetGateName()
@@ -111,10 +111,10 @@ end
 local function getDebugInformation()
     local debugInformation = {}
 
-    debugInformation['counts'] = getPlayerCounts()
-    debugInformation['E2Info'] = getE2Information()
-    debugInformation['playerInfo'] = getPlayersInfo()
-    debugInformation['serverInfo'] = getServerInfo()
+    debugInformation["counts"] = getPlayerCounts()
+    debugInformation["E2Info"] = getE2Information()
+    debugInformation["playerInfo"] = getPlayersInfo()
+    debugInformation["serverInfo"] = getServerInfo()
 
     return util.TableToJSON( debugInformation )
 end
@@ -130,14 +130,14 @@ local function playerCanSubmit( ply )
 end
 
 local function submitFormForPlayer( data, endpoint, ply )
-    local plyName = ply and ply:GetName() or 'Unknown Player'
+    local plyName = ply and ply:GetName() or "Unknown Player"
 
-    data['realm'] = REALM
+    data["realm"] = REALM
 
-    serverLog( 'Sending request for <' .. plyName .. '> with form data: ' )
+    serverLog( "Sending request for <" .. plyName .. "> with form data: " )
     PrintTable( data )
 
-    if not playerCanSubmit( ply ) then return alertPlayer( ply, 'You\'re doing that too much! Please wait or reach out on our discord' ) end
+    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You\'re doing that too much! Please wait or reach out on our discord" ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
     http.Post( url, data,
@@ -145,7 +145,7 @@ local function submitFormForPlayer( data, endpoint, ply )
             print( success )
         end,
         function( failure )
-            serverLog( 'Request failed with data:' )
+            serverLog( "Request failed with data:" )
             PrintTable( data )
             serverLog( failure )
         end
@@ -159,12 +159,12 @@ local function submitContactForm( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam_id'] = ply:SteamID()
-    data['steam_name'] = ply:GetName()
-    data['contact_method'] = contactMethod
-    data['message'] = message
+    data["steam_id"] = ply:SteamID()
+    data["steam_name"] = ply:GetName()
+    data["contact_method"] = contactMethod
+    data["message"] = message
 
-    submitFormForPlayer( data, 'contact', ply )
+    submitFormForPlayer( data, "contact", ply )
 end
 
 local function submitFeedbackForm( len, ply )
@@ -173,13 +173,13 @@ local function submitFeedbackForm( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam_id'] = ply:SteamID()
-    data['steam_name'] = ply:GetName()
-    data['rating'] = rating
-    data['likely_to_return'] = likelyToReturn
-    data['message'] = message
+    data["steam_id"] = ply:SteamID()
+    data["steam_name"] = ply:GetName()
+    data["rating"] = rating
+    data["likely_to_return"] = likelyToReturn
+    data["message"] = message
 
-    submitFormForPlayer( data, 'feedback', ply )
+    submitFormForPlayer( data, "feedback", ply )
 end
 
 local function submitBugReport( len, ply )
@@ -187,12 +187,12 @@ local function submitBugReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam_id'] = ply:SteamID()
-    data['steam_name'] = ply:GetName()
-    data['urgency'] = urgency
-    data['message'] = message
+    data["steam_id"] = ply:SteamID()
+    data["steam_name"] = ply:GetName()
+    data["urgency"] = urgency
+    data["message"] = message
 
-    submitFormForPlayer( data, 'bug-report', ply )
+    submitFormForPlayer( data, "bug-report", ply )
 end
 
 local function submitPlayerReport( len, ply )
@@ -201,14 +201,14 @@ local function submitPlayerReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam_id'] = ply:SteamID()
-    data['steam_name'] = ply:GetName()
-    data['reported_steam_id'] = reportedSteamID
-    data['reported_steam_name'] = player.GetBySteamID( reportedSteamID ):GetName()
-    data['urgency'] = urgency
-    data['message'] = message
+    data["steam_id"] = ply:SteamID()
+    data["steam_name"] = ply:GetName()
+    data["reported_steam_id"] = reportedSteamID
+    data["reported_steam_name"] = player.GetBySteamID( reportedSteamID ):GetName()
+    data["urgency"] = urgency
+    data["message"] = message
 
-    submitFormForPlayer( data, 'player-report', ply )
+    submitFormForPlayer( data, "player-report", ply )
 end
 
 local function submitStaffReport( len, ply )
@@ -217,12 +217,12 @@ local function submitStaffReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['reported_steam_id'] = reportedSteamID
-    data['reported_steam_name'] = player.GetBySteamID( reportedSteamID ):GetName()
-    data['urgency'] = urgency
-    data['message'] = message
+    data["reported_steam_id"] = reportedSteamID
+    data["reported_steam_name"] = player.GetBySteamID( reportedSteamID ):GetName()
+    data["urgency"] = urgency
+    data["message"] = message
 
-    submitFormForPlayer( data, 'staff-report', ply )
+    submitFormForPlayer( data, "staff-report", ply )
 end
 
 local function submitFreezeReport( len, ply )
@@ -230,18 +230,18 @@ local function submitFreezeReport( len, ply )
     local message = net.ReadString()
 
     local data = {}
-    data['steam_id'] = ply:SteamID()
-    data['steam_name'] = ply:GetName()
-    data['debug_information'] = getDebugInformation()
-    data['severity'] = severity
-    data['message'] = message
+    data["steam_id"] = ply:SteamID()
+    data["steam_name"] = ply:GetName()
+    data["debug_information"] = getDebugInformation()
+    data["severity"] = severity
+    data["message"] = message
 
-    submitFormForPlayer( data, 'freeze-report', ply )
+    submitFormForPlayer( data, "freeze-report", ply )
 end
 
-net.Receive( 'CFC_SubmitContactForm', submitContactForm )
-net.Receive( 'CFC_SubmitFeedbackForm', submitFeedbackForm )
-net.Receive( 'CFC_SubmitBugReport', submitBugReport )
-net.Receive( 'CFC_SubmitPlayerReport', submitPlayerReport )
-net.Receive( 'CFC_SubmitFreezeReport', submitFreezeReport )
-net.Receive( 'CFC_SubmitStaffReport', submitStaffReport )
+net.Receive( "CFC_SubmitContactForm", submitContactForm )
+net.Receive( "CFC_SubmitFeedbackForm", submitFeedbackForm )
+net.Receive( "CFC_SubmitBugReport", submitBugReport )
+net.Receive( "CFC_SubmitPlayerReport", submitPlayerReport )
+net.Receive( "CFC_SubmitFreezeReport", submitFreezeReport )
+net.Receive( "CFC_SubmitStaffReport", submitStaffReport )
