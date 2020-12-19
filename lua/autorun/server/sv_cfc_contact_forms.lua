@@ -137,7 +137,7 @@ local function submitFormForPlayer( data, endpoint, ply )
     serverLog( "Sending request for <" .. plyName .. "> with form data: " )
     PrintTable( data )
 
-    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You\'re doing that too much! Please wait or reach out on our discord" ) end
+    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
     http.Post( url, data,
