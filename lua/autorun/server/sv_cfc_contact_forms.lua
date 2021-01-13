@@ -199,12 +199,13 @@ local function submitPlayerReport( len, ply )
     local reportedSteamID = net.ReadString()
     local urgency = net.ReadString()
     local message = net.ReadString()
+    local reportedPly = player.GetBySteamID( reportedSteamID )
 
     local data = {}
     data["steam_id"] = ply:SteamID()
     data["steam_name"] = ply:GetName()
     data["reported_steam_id"] = reportedSteamID
-    data["reported_steam_name"] = player.GetBySteamID( reportedSteamID ):GetName()
+    data["reported_steam_name"] = reportedPly and reportedPly:GetName() or "<Unknown Name>"
     data["urgency"] = urgency
     data["message"] = message
 
@@ -215,10 +216,11 @@ local function submitStaffReport( len, ply )
     local reportedSteamID = net.ReadString()
     local urgency = net.ReadString()
     local message = net.ReadString()
+    local reportedPly = player.GetBySteamID( reportedSteamID )
 
     local data = {}
     data["reported_steam_id"] = reportedSteamID
-    data["reported_steam_name"] = player.GetBySteamID( reportedSteamID ):GetName()
+    data["reported_steam_name"] = reportedPly and reportedPly:GetName() or "<Unknown Name>"
     data["urgency"] = urgency
     data["message"] = message
 
