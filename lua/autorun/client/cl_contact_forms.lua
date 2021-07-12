@@ -1,5 +1,14 @@
 local Frame = nil
 
+ProtectedCall( function()
+    require( "mixpanel" )
+end )
+
+local TrackEvent = function( ... )
+    if not Mixpanel then return end
+    Mixpanel:TrackEvent( ... )
+end
+
 local function makeFormButton( text, callback, parent )
     local Button = vgui.Create( "DButton", parent )
 
@@ -384,8 +393,9 @@ local function fieldsAreValid( fields )
 end
 
 local function openForm( formData )
-    Frame:Close()
+    TrackEvent( "Player opened '" .. formData.formType .. "' form" )
 
+    Frame:Close()
     local containerWidth = ScrW() * 0.52
     local containerHeight = ScrH() * 0.93
 
@@ -414,6 +424,8 @@ local function openForm( formData )
 
     -- Needed for the timers to fade the form out
     local Form = nil
+    local fields = {}
+
 
     local BackButton = vgui.Create( "DImageButton", FormContainer )
     BackButton:SetSize( 32, 32 )
@@ -424,25 +436,21 @@ local function openForm( formData )
 
     BackButton:SetImage( formImage( "back-button" ), "Back" )
     BackButton.DoClick = function()
-        -- local closeDuration = 0.5
-        -- local closeSteps = 33
-        -- local closeStep = 1
+        FormContainer:Close()
+        CFCContactForms.openForms()
+        timer.Remove( "CFC_FadeInForm" )
+        timer.Remove( "CFC_FadeOutForm" )
+        timer.Remove( "CFC_DelayCloseForm" )
 
-        -- timer.Create( "CFC_FadeOutForm", closeDuration / closeSteps, closeSteps, function()
-        --    local newAlpha =  0 * math.pow( 5, 10 * ( closeStep / closeSteps - 1 ) ) + 255;
-        --    print( newAlpha )
-        --    Form:SetAlpha( newAlpha )
+        local currentData = {}
+        for _, fieldStruct in pairs( fields ) do
+            currentData[fieldStruct.name] = fieldStruct.field:GetValue() or "<empty>"
+        end
 
-        --    closeStep = closeStep + 1
-        -- end )
-
-        -- timer.Create( "CFC_DelayCloseForm", closeDuration, 1, function()
-            FormContainer:Close()
-            CFCContactForms.openForms()
-            timer.Remove( "CFC_FadeInForm" )
-            timer.Remove( "CFC_FadeOutForm" )
-            timer.Remove( "CFC_DelayCloseForm" )
-        -- end )
+        TrackEvent(
+            "Player backed out of '" .. formData.formType .. "' form",
+            { currentData = currentData }
+        )
     end
 
     Form = vgui.Create( "DScrollPanel", FormContainer )
@@ -451,10 +459,9 @@ local function openForm( formData )
     Form:Dock( FILL )
 
     local backButtonTopMargin = ScrH() * 0.05
+
     Form:DockMargin( 0, backButtonTopMargin, 0, 0 )
-
     Form:Center()
-
     Form:SetAlpha( 0 )
 
     -- Transition
@@ -485,8 +492,6 @@ local function openForm( formData )
     makeHeader( headerTextContent, Form )
 
     local FormAlert = makeFormErrorAlert( Form )
-
-    local fields = {}
 
     for i, question in pairs( formData.questions ) do
         local Field = makeFormField( question, Form )
@@ -523,8 +528,10 @@ local function openForm( formData )
             FormContainer:Close()
 
             notification.AddLegacy( "Thanks for your form submission!", NOTIFY_UNDO, 5 )
+            TrackEvent( "Player submitted '" .. formData.formType .. "' form" )
         else
             FormAlert:SetAlpha( 255 )
+            TrackEvent( "Player submitted invalid '" .. formData.formType .. "' form" )
         end
     end
 
@@ -594,6 +601,7 @@ local function openFeedbackForm()
 end
 
 local function openBugReportForm()
+
     local formData = {}
     formData.title = "Bug Report"
     formData.formType = "bug-report"
