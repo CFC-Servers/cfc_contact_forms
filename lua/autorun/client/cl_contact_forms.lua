@@ -601,7 +601,6 @@ local function openFeedbackForm()
 end
 
 local function openBugReportForm()
-
     local formData = {}
     formData.title = "Bug Report"
     formData.formType = "bug-report"
