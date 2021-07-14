@@ -528,6 +528,7 @@ local function openForm( formData )
             FormContainer:Close()
 
             notification.AddLegacy( "Thanks for your form submission!", NOTIFY_UNDO, 5 )
+            surface.PlaySound( "buttons/button9.wav" )
             TrackEvent( "Player submitted '" .. formData.formType .. "' form" )
         else
             FormAlert:SetAlpha( 255 )
@@ -788,6 +789,25 @@ hook.Add( "OnPlayerChat", "CFC_ContactForms_OpenFormCommand", function( ply, msg
 
     -- Suppress message
     return true
+end )
+
+local GREEN = Color( 87, 242, 135 )
+local RED = Color( 254, 231, 92 )
+local YELLOW = Color( 254, 231, 92 )
+local BLURPLE = Color( 88, 101, 242 )
+
+net.Receive( "CFC_ContactForms_SuccessAlert", function()
+    surface.PlaySound( "buttons/button5.wav" )
+    chat.AddText( GREEN, "Your form was successfully forwarded to the staff team!")
+end )
+
+net.Receive( "CFC_ContactForms_FailureAlert", function()
+    surface.PlaySound( "buttons/button11.wav" )
+    chat.AddText(
+        RED, "Something went wrong! The staff team did not receive your report.\n",
+        YELLOW, "We apologize. Please reach out to us on Discord if you need immediate assistance:\n",
+        BLURPLE, "https://cfcservers.org/discord\n"
+    )
 end )
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )

@@ -4,6 +4,8 @@ util.AddNetworkString( "CFC_SubmitBugReport" )
 util.AddNetworkString( "CFC_SubmitPlayerReport" )
 util.AddNetworkString( "CFC_SubmitFreezeReport" )
 util.AddNetworkString( "CFC_SubmitStaffReport" )
+util.AddNetworkString( "CFC_ContactForms_SuccessAlert" )
+util.AddNetworkString( "CFC_ContactForms_FailureAlert" )
 
 local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
 if not FORM_PROCESSOR_URL or FORM_PROCESSOR_URL == "" then
@@ -129,6 +131,16 @@ local function playerCanSubmit( ply )
     return ( playerSubmissionCounts[ply] or 0 ) < 3
 end
 
+local function sendSuccessAlert( ply )
+    net.Start( "CFC_ContactForms_SuccessAlert" )
+    net.Send( ply )
+end
+
+local function sendFailureAlert( ply )
+    net.Start( "CFC_ContactForms_FailureAlert" )
+    net.Send( ply )
+end
+
 local function submitFormForPlayer( data, endpoint, ply )
     local plyName = ply and ply:GetName() or "Unknown Player"
 
@@ -143,8 +155,10 @@ local function submitFormForPlayer( data, endpoint, ply )
     http.Post( url, data,
         function( success )
             print( success )
+            sendSuccessAlert( ply )
         end,
         function( failure )
+            sendFailureAlert( ply )
             serverLog( "Request failed with data:" )
             PrintTable( data )
             serverLog( failure )
