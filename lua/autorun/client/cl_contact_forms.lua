@@ -792,8 +792,8 @@ hook.Add( "OnPlayerChat", "CFC_ContactForms_OpenFormCommand", function( ply, msg
 end )
 
 local GREEN = Color( 87, 242, 135 )
-local RED = Color( 254, 231, 92 )
-local YELLOW = Color( 254, 231, 92 )
+local RED = Color( 237, 66, 69 )
+local YELLOW = Color( 254, 231, 92)
 local BLURPLE = Color( 88, 101, 242 )
 
 net.Receive( "CFC_ContactForms_SuccessAlert", function()

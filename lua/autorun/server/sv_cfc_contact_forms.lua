@@ -132,11 +132,15 @@ local function playerCanSubmit( ply )
 end
 
 local function sendSuccessAlert( ply )
+    if not IsValid( ply ) then return end
+
     net.Start( "CFC_ContactForms_SuccessAlert" )
     net.Send( ply )
 end
 
 local function sendFailureAlert( ply )
+    if not IsValid( ply ) then return end
+
     net.Start( "CFC_ContactForms_FailureAlert" )
     net.Send( ply )
 end
