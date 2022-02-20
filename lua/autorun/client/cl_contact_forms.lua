@@ -810,4 +810,11 @@ net.Receive( "CFC_ContactForms_FailureAlert", function()
     )
 end )
 
+net.Receive("Admin_alert", function()
+    local ply = net.ReadString() -- Reads the reporter's name
+    local plyRankColor = net.ReadColor() -- Reads the color of reporter's rank
+    chat.AddText( plyRankColor, ply, YELLOW, " has submitted a report." ) -- messgae via chat
+    LocalPlayer():PrintMessage( 4, ply .. " made a report!" ) -- message via HUD
+end)
+
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
