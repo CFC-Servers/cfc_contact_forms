@@ -173,7 +173,7 @@ local function submitFormForPlayer( data, endpoint, ply )
 
     recordPlayerSubmission( ply )
 
-    local staffRanks = { ["Moderator"] = true }
+    local staffRanks = { moderator = true }
     for _,p in ipairs( player.GetHumans() ) do
         if p:IsAdmin() or staffRanks[p:GetUserGroup()] then
             net.Start( "cfc_contact_forms_alert" )

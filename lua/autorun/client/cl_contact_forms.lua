@@ -811,7 +811,6 @@ net.Receive( "CFC_ContactForms_FailureAlert", function()
 end )
 
 net.Receive("cfc_contact_forms_alert", function()
-    --local ply = net.ReadEntity() -- reads the reporter's player entity
     local data = net.ReadTable()
     local reporter = player.GetBySteamID(data["steam_id"])
     local reported = player.GetBySteamID(data["reported_steam_id"])
@@ -824,17 +823,19 @@ net.Receive("cfc_contact_forms_alert", function()
 
     chat.AddText(
         reporterRankColor, reporterName,
-        YELLOW, " has submitted a report against ",
+        YELLOW, " has submitted a forms report on ",
         reportedRankColor, reportedName
     ) -- message via chat
-    LocalPlayer():PrintMessage( 4, reporterName .. " made a report!" ) -- message via HUD
+    LocalPlayer():PrintMessage( 4, reporterName .. " has submitted a forms report on " .. reportedName ) -- message via HUD
     local outerColor = Color(41, 41, 41)
     local innerColor = Color(150, 150, 150)
     chat.AddText(
-        darkGrey, "[", innerColor, "CFC Forms", darkGrey, "] ",
-        Color(206,206,206), string.Left( data["message"], 100 )
+        outerColor, "[", innerColor, "CFC Forms", outerColor, "] ",
+        Color(206,206,206), string.Left( data["message"], 99 ),
+        innerColor, "...\nFull message in console."
     ) -- prints reporter's message
-    PrintTable( data ) -- prints the report data in admin's console
+    --PrintTable( data ) -- prints the report data in admin's console
+    print("| Reporter\t: " .. reporterName .. " (" .. data["steam_id"] .. ")\n| Reported\t: " .. reportedName .. " (" .. data["reported_steam_id"] .. ")\n| Full message\t: " .. data["message"])
 end)
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
