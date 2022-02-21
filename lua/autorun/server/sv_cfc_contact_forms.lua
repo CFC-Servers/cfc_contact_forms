@@ -145,7 +145,7 @@ local function sendFailureAlert( ply )
     net.Send( ply )
 end
 
-util.AddNetworkString( "Admin_alert" )
+util.AddNetworkString( "cfc_contact_forms_alert" )
 
 local function submitFormForPlayer( data, endpoint, ply )
     local plyName = ply and ply:GetName() or "Unknown Player"
@@ -173,11 +173,11 @@ local function submitFormForPlayer( data, endpoint, ply )
 
     recordPlayerSubmission( ply )
 
+    local staffRanks = { ["Moderator"] = true }
     for _,p in ipairs( player.GetHumans() ) do
-        if p:IsAdmin() then
-            net.Start( "Admin_alert" )
-            net.WriteString( plyName ) -- Writes the reporter's name
-            net.WriteColor( team.GetColor( ply:Team() ) ) -- Writes the reporter's rank color
+        if p:IsAdmin() or staffRanks[p:GetUserGroup()] then
+            net.Start( "cfc_contact_forms_alert" )
+            net.WriteTable( data ) -- writes the report data
             net.Send( p )
         end
     end
