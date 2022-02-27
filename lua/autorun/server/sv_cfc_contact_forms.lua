@@ -176,7 +176,7 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
     local staffRanks = { moderator = true }
     for _, ply in ipairs( player.GetHumans() ) do
         if ply:IsAdmin() or staffRanks[ply:GetUserGroup()] then
-            net.Start( "cfc_contact_forms_alert" )
+            net.Start( "CFC_ContactForms_Alert" )
             net.WriteTable( data ) -- writes the report data
             net.Send( ply )
         end

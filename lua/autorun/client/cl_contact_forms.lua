@@ -810,7 +810,7 @@ net.Receive( "CFC_ContactForms_FailureAlert", function()
     )
 end )
 
-net.Receive("cfc_contact_forms_alert", function()
+net.Receive("CFC_ContactForms_Alert", function()
     local data = net.ReadTable()
     local reporter = player.GetBySteamID(data["steam_id"])
     local reported = player.GetBySteamID(data["reported_steam_id"])
