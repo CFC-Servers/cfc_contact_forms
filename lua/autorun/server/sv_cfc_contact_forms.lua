@@ -145,7 +145,7 @@ local function sendFailureAlert( ply )
     net.Send( ply )
 end
 
-util.AddNetworkString( "cfc_contact_forms_alert" )
+util.AddNetworkString( "CFC_ContactForms_Alert" )
 
 local function submitFormForPlayer( data, endpoint, formSubmitter )
     local submitterName = formSubmitter and formSubmitter:GetName() or "Unknown Player"
