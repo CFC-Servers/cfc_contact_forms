@@ -815,11 +815,11 @@ net.Receive("cfc_contact_forms_alert", function()
     local reporter = player.GetBySteamID(data["steam_id"])
     local reported = player.GetBySteamID(data["reported_steam_id"])
 
-    local reporterName = reporter:GetName() -- reporter's name
-    local reporterRankColor = team.GetColor(reporter:Team()) -- color of reporter's rank
+    local reporterName = reporter:GetName()
+    local reporterRankColor = team.GetColor(reporter:Team())
 
-    local reportedName = reported:GetName() -- reported player name
-    local reportedRankColor = team.GetColor(reported:Team()) -- color of reported player rank
+    local reportedName = reported:GetName()
+    local reportedRankColor = team.GetColor(reported:Team())
 
     chat.AddText(
         reporterRankColor, reporterName,
@@ -834,8 +834,18 @@ net.Receive("cfc_contact_forms_alert", function()
         Color(206,206,206), string.Left( data["message"], 99 ),
         innerColor, "...\nFull message in console."
     ) -- prints reporter's message
-    --PrintTable( data ) -- prints the report data in admin's console
-    print("| Reporter\t: " .. reporterName .. " (" .. data["steam_id"] .. ")\n| Reported\t: " .. reportedName .. " (" .. data["reported_steam_id"] .. ")\n| Full message\t: " .. data["message"])
+    
+    local reportDataFields = {
+        Reporter = reporterName .. " (" .. data.steam_id .. ")",
+        Reported = reportedName .. " (" .. data.reported_steam_id .. ")",
+        Message = data["message"]
+    }
+    local decor = "+" .. string.rep("-", 80)
+    print(decor)
+    for fieldName, fieldValue in pairs( reportDataFields ) do
+        print( "| " .. fieldName .. "\t: " .. fieldValue )
+    end
+    print(decor)
 end)
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
