@@ -145,31 +145,42 @@ local function sendFailureAlert( ply )
     net.Send( ply )
 end
 
-local function submitFormForPlayer( data, endpoint, ply )
-    local plyName = ply and ply:GetName() or "Unknown Player"
+util.AddNetworkString( "CFC_ContactForms_Alert" )
+
+local function submitFormForPlayer( data, endpoint, formSubmitter )
+    local submitterName = formSubmitter and formSubmitter:GetName() or "Unknown Player"
 
     data["realm"] = REALM
 
-    serverLog( "Sending request for <" .. plyName .. "> with form data: " )
+    serverLog( "Sending request for <" .. submitterName .. "> with form data: " )
     PrintTable( data )
 
-    if not playerCanSubmit( ply ) then return alertPlayer( ply, "You're doing that too much! Please wait or reach out on our discord" ) end
+    if not playerCanSubmit( formSubmitter ) then return alertPlayer( formSubmitter, "You're doing that too much! Please wait or reach out on our discord" ) end
 
     local url = FORM_PROCESSOR_URL ..  endpoint
     http.Post( url, data,
         function( success )
             print( success )
-            sendSuccessAlert( ply )
+            sendSuccessAlert( formSubmitter )
         end,
         function( failure )
-            sendFailureAlert( ply )
+            sendFailureAlert( formSubmitter )
             serverLog( "Request failed with data:" )
             PrintTable( data )
             serverLog( failure )
         end
     )
 
-    recordPlayerSubmission( ply )
+    recordPlayerSubmission( formSubmitter )
+
+    local staffRanks = { moderator = true }
+    for _, ply in ipairs( player.GetHumans() ) do
+        if ply:IsAdmin() or staffRanks[ply:GetUserGroup()] then
+            net.Start( "CFC_ContactForms_Alert" )
+            net.WriteTable( data ) -- writes the report data
+            net.Send( ply )
+        end
+    end
 end
 
 local function submitContactForm( len, ply )
