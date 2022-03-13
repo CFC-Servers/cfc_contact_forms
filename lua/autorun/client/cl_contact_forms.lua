@@ -831,7 +831,7 @@ net.Receive( "CFC_ContactForms_Alert", function()
         reportedRankColor, reportedName
     ) -- message via chat
 
-    LocalPlayer():PrintMessage( 4, reporterName .. " has submitted a forms report on " .. reportedName ) -- message via HUD
+    LocalPlayer():PrintMessage( HUD_PRINTCENTER, reporterName .. " has submitted a forms report on " .. reportedName )
 
     chat.AddText(
         DARK_GRAY, "[", LIGHT_GRAY, "CFC Forms", DARK_GRAY, "] ",
