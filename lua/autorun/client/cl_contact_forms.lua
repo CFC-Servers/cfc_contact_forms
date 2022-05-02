@@ -814,10 +814,11 @@ end )
 
 net.Receive( "CFC_ContactForms_Alert", function()
     local data = net.ReadTable()
-    local reporter = player.GetBySteamID( data.steam_id )
-    local reported = player.GetBySteamID( data.reported_steam_id )
+    local reporter = player.GetBySteamID( data.steam_id or "" )
+    local reported = player.GetBySteamID( data.reported_steam_id or "" )
 
-    if not IsValid( reporter ) or not IsValid( reported ) then return end
+    if not reporter or not IsValid( reporter ) then return end 
+    if not reported or not IsValid( reported ) then return end
 
     local reporterName = reporter:GetName()
     local reporterRankColor = team.GetColor( reporter:Team() )
