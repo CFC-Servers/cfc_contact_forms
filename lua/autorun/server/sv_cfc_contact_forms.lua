@@ -183,7 +183,7 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
     end
 end
 
-local function submitContactForm( len, ply )
+local function submitContactForm( _, ply )
     local contactMethod = net.ReadString()
     local message = net.ReadString()
 
@@ -196,7 +196,7 @@ local function submitContactForm( len, ply )
     submitFormForPlayer( data, "contact", ply )
 end
 
-local function submitFeedbackForm( len, ply )
+local function submitFeedbackForm( _, ply )
     local rating = net.ReadString()
     local likelyToReturn = net.ReadString()
     local message = net.ReadString()
@@ -211,7 +211,7 @@ local function submitFeedbackForm( len, ply )
     submitFormForPlayer( data, "feedback", ply )
 end
 
-local function submitBugReport( len, ply )
+local function submitBugReport( _, ply )
     local urgency = net.ReadString()
     local message = net.ReadString()
 
@@ -224,7 +224,7 @@ local function submitBugReport( len, ply )
     submitFormForPlayer( data, "bug-report", ply )
 end
 
-local function submitPlayerReport( len, ply )
+local function submitPlayerReport( _, ply )
     local reportedSteamID = net.ReadString()
     local urgency = net.ReadString()
     local message = net.ReadString()
@@ -241,7 +241,7 @@ local function submitPlayerReport( len, ply )
     submitFormForPlayer( data, "player-report", ply )
 end
 
-local function submitStaffReport( len, ply )
+local function submitStaffReport( _, ply )
     local reportedSteamID = net.ReadString()
     local urgency = net.ReadString()
     local message = net.ReadString()
@@ -256,7 +256,7 @@ local function submitStaffReport( len, ply )
     submitFormForPlayer( data, "staff-report", ply )
 end
 
-local function submitFreezeReport( len, ply )
+local function submitFreezeReport( _, ply )
     local severity = net.ReadString()
     local message = net.ReadString()
 
