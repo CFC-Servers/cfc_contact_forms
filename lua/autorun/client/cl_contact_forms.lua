@@ -23,7 +23,7 @@ local function makeFormButton( text, callback, parent )
 
     Button:SetSize( desiredSizeX, 30 )
 
-    Button.Paint = function( self, w, h )
+    Button.Paint = function( _, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
 
         surface.SetDrawColor( 255, 255, 255, 255 )
@@ -127,7 +127,7 @@ local function makeTitle( text, parent )
     Title:Dock( TOP )
     Title:DockMargin( 0, 10, 0, 30 )
 
-    function Title:PerformLayout( w1, w2 )
+    function Title:PerformLayout()
         Title:SetFGColor( Color( 255, 255, 255, 255 ) )
         Title:SetFontInternal( "CFCFormTitle" )
         Title:SetToFullHeight()
@@ -493,7 +493,7 @@ local function openForm( formData )
 
     local FormAlert = makeFormErrorAlert( Form )
 
-    for i, question in pairs( formData.questions ) do
+    for _, question in pairs( formData.questions ) do
         local Field = makeFormField( question, Form )
 
         local bottomMargin = ScrH() * 0.025
@@ -515,7 +515,7 @@ local function openForm( formData )
     local submitHeight = ScrH() * 0.06
     SubmitButton:SetHeight( submitHeight )
 
-    SubmitButton.Paint = function( self, w, h )
+    SubmitButton.Paint = function( _, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
 
         surface.SetDrawColor( 255, 255, 255, 255 )
@@ -793,14 +793,14 @@ end )
 
 local GREEN = Color( 87, 242, 135 )
 local RED = Color( 237, 66, 69 )
-local YELLOW = Color( 254, 231, 92)
+local YELLOW = Color( 254, 231, 92 )
 local BLURPLE = Color( 88, 101, 242 )
 local DARK_GRAY = Color( 41, 41, 41 )
 local LIGHT_GRAY = Color( 150, 150, 150 )
 
 net.Receive( "CFC_ContactForms_SuccessAlert", function()
     surface.PlaySound( "buttons/button5.wav" )
-    chat.AddText( GREEN, "Your form was successfully forwarded to the staff team!")
+    chat.AddText( GREEN, "Your form was successfully forwarded to the staff team!" )
 end )
 
 net.Receive( "CFC_ContactForms_FailureAlert", function()
@@ -838,7 +838,7 @@ net.Receive( "CFC_ContactForms_Alert", function()
         Color( 206,206,206 ), string.Left( data.message, 99 ),
         LIGHT_GRAY, "...\nFull message in console."
     ) -- prints reporter's message
-    
+
     local decor = "+" .. string.rep( "-", 80 )
     local reportDataFields = { -- Each field is a two-index table since string keys have an unpredictable order
         { "Reporter", reporterName .. " (" .. data.steam_id .. ")" },
@@ -853,6 +853,6 @@ net.Receive( "CFC_ContactForms_Alert", function()
     end
 
     MsgN( decor )
-end)
+end )
 
 concommand.Add( "cfc_forms", CFCContactForms.openForms )
