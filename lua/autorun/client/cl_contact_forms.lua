@@ -395,7 +395,8 @@ end
 local function openForm( formData )
     TrackEvent( "Player opened '" .. formData.formType .. "' form" )
 
-    Frame:Close()
+    if IsValid( Frame ) then Frame:Close() end
+
     local containerWidth = ScrW() * 0.52
     local containerHeight = ScrH() * 0.93
 
