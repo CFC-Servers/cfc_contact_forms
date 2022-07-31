@@ -172,6 +172,7 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
     )
 
     recordPlayerSubmission( formSubmitter )
+    if endpoint == "staff-report" then return end
 
     local staffRanks = { moderator = true }
     for _, ply in ipairs( player.GetHumans() ) do
