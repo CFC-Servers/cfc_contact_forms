@@ -7,6 +7,8 @@ util.AddNetworkString( "CFC_SubmitStaffReport" )
 util.AddNetworkString( "CFC_ContactForms_SuccessAlert" )
 util.AddNetworkString( "CFC_ContactForms_FailureAlert" )
 
+local staffRanks = { moderator = true }
+
 local FORM_PROCESSOR_URL = file.Read( "cfc/contact/url.txt", "DATA" )
 if not FORM_PROCESSOR_URL or FORM_PROCESSOR_URL == "" then
     error( "[CFC Contact Forms] Couldn't find cfc/contact/url.txt or file was empty - cannot start" )
@@ -173,7 +175,8 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
 
     recordPlayerSubmission( formSubmitter )
 
-    local staffRanks = { moderator = true }
+    if endpoint ~= "player-report" then return end
+
     for _, ply in ipairs( player.GetHumans() ) do
         if ply:IsAdmin() or staffRanks[ply:GetUserGroup()] then
             net.Start( "CFC_ContactForms_Alert" )
