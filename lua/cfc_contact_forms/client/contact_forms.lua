@@ -41,7 +41,7 @@ surface.CreateFont( "CFCFormTitle", {
 
 CFCContactForms.openForms = function()
     local x = 400
-    local y = 500
+    local y = 585
 
     CFCContactForms.Frame = vgui.Create( "DFrame" )
     local Frame = CFCContactForms.Frame

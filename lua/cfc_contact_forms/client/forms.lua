@@ -8,7 +8,7 @@ function Forms.Contact()
     formData.formType = "contact"
 
     formData.headerText = {
-        "We'd love to hear from you! Just tell us how we can get in touch with you, and a brief description of your question/comment/concern and we'll get back to you ASAP!"
+        "We'd love to hear from you! Tell us how we can get in touch with you and include a brief description of your question/comment/concern. We'll get back to you ASAP!"
     }
 
     local questions = {}
@@ -73,8 +73,8 @@ function Forms.BugReport()
     formData.formType = "bug-report"
 
     formData.headerText = {
-        "Uh oh! Have you experienced something unsavory, or otherwise unexpected?",
-        "Please tell us about it - we have a team of dedicated developers who love squashing bugs!"
+        "Have you experienced something unsavory or otherwise unexpected?",
+        "Tell us about it! Please be descriptive so we can tackle your issue quickly.",
     }
 
     local questions = {}
@@ -104,8 +104,8 @@ function Forms.PlayerReport()
 
     formData.headerText = {
         "Is a player ruining the experience of others?",
-        "Tell us about it! Our staff will receive this report immediately and will take action as soon as they can.",
-        "Please, only one player per report!"
+        "Tell us about it! Our staff will receive this report and take action as soon as they can.",
+        "(Only one player per report!)"
     }
 
     local questions = {}
@@ -141,7 +141,7 @@ function Forms.StaffReport()
     formData.headerText = {
         "Is a staff member breaking the rules?",
         "You can report them anonymously so that we can take action as fast as possible!",
-        "Please, only one staff member per report!"
+        "(Only one staff member per report!)"
     }
 
     local questions = {}

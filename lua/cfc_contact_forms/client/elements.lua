@@ -41,7 +41,7 @@ function Elements.FormButton( text, callback, parent )
     local parentX = parent:GetSize()
     local desiredSizeX = parentX * 0.8
 
-    Button:SetSize( desiredSizeX, 30 )
+    Button:SetSize( desiredSizeX, 55 )
 
     Button.Paint = function( _, w, h )
         draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )

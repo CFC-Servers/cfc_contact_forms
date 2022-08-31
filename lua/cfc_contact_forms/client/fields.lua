@@ -153,7 +153,7 @@ end
 
 
 ----------------------
--- All Player Dropdown
+-- Staff Dropdown
 ----------------------
 function Fields.StaffDropDown( question, parent )
     local plys = {}
