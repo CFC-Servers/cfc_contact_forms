@@ -14,6 +14,7 @@ local logger = Logger( "CFC Contact Forms" )
 
 local realm = CreateConVar( "cfc_realm", "", FCVAR_ARCHIVE + FCVAR_PROTECTED, "The Realm Name" )
 local processorUrl = CreateConVar( "cfc_contact_forms_url", "", FCVAR_ARCHIVE + FCVAR_PROTECTED, "Form Processor URL" )
+local staffRanks = { moderator = true }
 
 local playerCounts = {}
 
@@ -87,7 +88,8 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
 
     recordPlayerSubmission( formSubmitter )
 
-    local staffRanks = { moderator = true }
+    if endpoint ~= "player-report" then return end
+
     for _, ply in ipairs( player.GetHumans() ) do
         if ply:IsAdmin() or staffRanks[ply:GetUserGroup()] then
             net.Start( "CFC_ContactForms_Alert" )
