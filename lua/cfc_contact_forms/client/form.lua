@@ -1,5 +1,8 @@
 local Elements = CFCContactForms.Elements
 local Fields = CFCContactForms.Fields
+local SendQueue = CFCContactForms.SendQueue
+
+local MAX_CHUNK_SIZE = 62000
 
 local TrackEvent = function( ... )
     if not Mixpanel then return end
@@ -23,27 +26,56 @@ local Helpers = {
         return path .. imageBase .. grayscale .. ".png"
     end,
 
+    ProcessImage = function( field )
+        print( "Sending image..." )
+        local data = field:GetValue()
+        print( data )
+        local dataSize = #data
+        print( "Image size: ", dataSize )
+
+        local totalChunks = dataSize / MAX_CHUNK_SIZE
+        print( "Total Chunks: ", totalChunks )
+        totalChunks = math.ceil( totalChunks )
+
+        net.WriteUInt( totalChunks, 4 )
+
+        local perChunk = math.ceil( dataSize / totalChunks )
+        print( "Per Chunk: ", perChunk )
+        local thisChunk = string.sub( data, 1, math.min( perChunk, #data ) )
+        print( thisChunk )
+        print( "First chunk size: ", #thisChunk )
+        print( "First chunk from: ", 1, math.min( perChunk, #data ) )
+
+        net.WriteUInt( #thisChunk, 16 )
+        net.WriteData( thisChunk, #thisChunk )
+
+        for i = 2, totalChunks do
+            print( "Sending next chunk: ", i )
+            local thisStart = ( ( i - 1 ) * perChunk ) + 1
+            local thisEnd = math.min( thisStart + perChunk, #data )
+            print( "Chunk #" .. i, "Start: " .. thisStart, "End: " .. thisEnd )
+            local nextChunk = string.sub( data, thisStart, thisEnd )
+            table.insert( SendQueue, nextChunk )
+        end
+    end,
+
     ProcessFields = function( self, fields, formData )
         local formType = formData.formType
         local netstring = self.FORM_TYPE_TO_NETSTRING[formType]
 
+        print( "Starting: ", netstring )
         net.Start( netstring )
             for _, fieldStruct in pairs( fields ) do
                 local field = fieldStruct.field
-                PrintTable( fieldStruct )
 
-                print( "Sending '" .. fieldStruct.name .. "/" .. "' to the server .. " )
                 if fieldStruct.name == "image" then
-                    print( "Sending image..." )
-                    local dataSize = #field:GetValue()
-                    print( "Image size: ", dataSize )
-
-                    net.WriteUInt( dataSize, 32 )
-                    net.WriteData( field:GetValue(), dataSize )
+                    self.ProcessImage( field )
                 else
                     net.WriteString( field:GetValue() )
                 end
             end
+
+        print( "Finishing: ", netstring )
         net.SendToServer()
     end,
 

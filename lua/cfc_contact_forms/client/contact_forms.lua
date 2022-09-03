@@ -1,9 +1,6 @@
-ProtectedCall( function()
-    require( "mixpanel" )
-end )
-
 CFCContactForms = {
     Frame = {},
+    SendQueue = {},
 
     IS_STAFF = {
         sentinel = true,
@@ -94,4 +91,17 @@ hook.Add( "OnPlayerChat", "CFC_ContactForms_OpenFormCommand", function( ply, msg
 
     -- Suppress message
     return true
+end )
+
+net.Receive( "CFC_ContactForms_ReadyForNext", function()
+    if not next( CFCContactForms.SendQueue ) then return end
+
+    local token = net.ReadString()
+    local nextChunk = table.remove( CFCContactForms.SendQueue, 1 )
+
+    net.Start( "CFC_ContactForms_FollowupData" )
+    net.WriteString( token )
+    net.WriteUInt( #nextChunk, 16 )
+    net.WriteData( nextChunk, #nextChunk )
+    net.SendToServer()
 end )

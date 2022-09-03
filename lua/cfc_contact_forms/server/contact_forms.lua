@@ -9,6 +9,8 @@ util.AddNetworkString( "CFC_SubmitStaffReport" )
 util.AddNetworkString( "CFC_ContactForms_SuccessAlert" )
 util.AddNetworkString( "CFC_ContactForms_FailureAlert" )
 util.AddNetworkString( "CFC_ContactForms_Alert" )
+util.AddNetworkString( "CFC_ContactForms_FollowupData" )
+util.AddNetworkString( "CFC_ContactForms_ReadyForNext" )
 
 local logger = Logger( "CFC Contact Forms" )
 
@@ -74,7 +76,7 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
     local url = processorUrl:GetString() .. endpoint
     logger:info("url", url)
     http.Post( url, data,
-        function( success, _, headers, code )
+        function( _, _, _, code )
             logger:info( code )
             sendSuccessAlert( formSubmitter )
         end,
@@ -108,3 +110,4 @@ net.Receive( "CFC_SubmitBugReport", Forms.BugReport )
 net.Receive( "CFC_SubmitPlayerReport", Forms.PlayerReport )
 net.Receive( "CFC_SubmitFreezeReport", Forms.FreezeReport )
 net.Receive( "CFC_SubmitStaffReport", Forms.StaffReport )
+net.Receive( "CFC_ContactForms_FollowupData", Forms.FollowupData )
