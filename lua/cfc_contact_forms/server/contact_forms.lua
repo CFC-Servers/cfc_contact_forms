@@ -71,10 +71,11 @@ local function submitFormForPlayer( data, endpoint, formSubmitter )
         return alertPlayer( formSubmitter, "You're doing that too much! Please wait or reach out on our discord" )
     end
 
-    local url = processorUrl:GetString() ..  endpoint
+    local url = processorUrl:GetString() .. endpoint
+    logger:info("url", url)
     http.Post( url, data,
-        function( success )
-            logger:info( success )
+        function( success, _, headers, code )
+            logger:info( code )
             sendSuccessAlert( formSubmitter )
         end,
 

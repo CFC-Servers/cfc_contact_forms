@@ -19,7 +19,6 @@ CFCContactForms = {
         report = true,
         feedback = true
     },
-
 }
 
 local Elements = include( "elements.lua" )
@@ -31,6 +30,8 @@ CFCContactForms.Form = include( "form.lua" )
 
 local Forms = include( "forms.lua" )
 CFCContactForms.Forms = include( "forms.lua" )
+
+CFCContactForms.Screenshot = include( "screenshot.lua" )
 
 include( "alert.lua" )
 

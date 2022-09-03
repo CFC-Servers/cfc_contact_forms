@@ -36,11 +36,15 @@ return function( submitForm )
         local urgency = net.ReadString()
         local message = net.ReadString()
 
+        local imageSize = net.ReadUInt( 32 )
+        local image = util.Decompress( net.ReadData( imageSize ) )
+
         local data = {}
         data["steam_id"] = ply:SteamID()
         data["steam_name"] = ply:GetName()
         data["urgency"] = urgency
         data["message"] = message
+        data["image"] = image
 
         submitForm( data, "bug-report", ply )
     end

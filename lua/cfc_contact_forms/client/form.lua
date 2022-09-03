@@ -30,9 +30,19 @@ local Helpers = {
         net.Start( netstring )
             for _, fieldStruct in pairs( fields ) do
                 local field = fieldStruct.field
+                PrintTable( fieldStruct )
 
-                print( "Sending '" .. fieldStruct.name .. "' to the server .. " )
-                net.WriteString( field:GetValue() )
+                print( "Sending '" .. fieldStruct.name .. "/" .. "' to the server .. " )
+                if fieldStruct.name == "image" then
+                    print( "Sending image..." )
+                    local dataSize = #field:GetValue()
+                    print( "Image size: ", dataSize )
+
+                    net.WriteUInt( dataSize, 32 )
+                    net.WriteData( field:GetValue(), dataSize )
+                else
+                    net.WriteString( field:GetValue() )
+                end
             end
         net.SendToServer()
     end,

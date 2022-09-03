@@ -91,6 +91,11 @@ function Forms.BugReport()
     message.fieldType = "text"
     table.insert( questions, message )
 
+    local image = {}
+    image.name = "image"
+    image.fieldType = "image"
+    table.insert( questions, image )
+
     formData.questions = questions
 
     Form( formData )
@@ -127,6 +132,11 @@ function Forms.PlayerReport()
     message.name = "message"
     message.fieldType = "text"
     table.insert( questions, message )
+
+    local image = {}
+    image.name = "image"
+    image.fieldType = "image"
+    table.insert( questions, image )
 
     formData.questions = questions
 

@@ -220,6 +220,29 @@ function Fields.Rating( question, parent )
     return slidingScaleField( question, parent, "star" )
 end
 
+function Fields.ScreenshotButton( _, parent )
+    local Button = {}
+
+    local cb = function()
+        CFCContactForms.FormContainer:SetVisible( false )
+
+        local onScreenshot = function( imageData )
+            Button.imageData = imageData
+            CFCContactForms.FormContainer:SetVisible( true )
+            Button:SetText( "[Screenshot Taken]" )
+        end
+
+        CFCContactForms.Screenshot:Start( onScreenshot )
+    end
+
+    Button = Elements.FormButton( "Include a Screenshot", cb, parent )
+    function Button:GetValue()
+        return self.imageData
+    end
+
+    return Button
+end
+
 function Fields:FormField( ... )
     local args = { ... }
     local question = args[1]
@@ -247,6 +270,10 @@ function Fields:FormField( ... )
 
     if fieldType == "rating" then
         return self.Rating( ... )
+    end
+
+    if fieldType == "image" then
+        return self.ScreenshotButton( ... )
     end
 
     print( "Not sure what to do with this field type! :" .. fieldType or "nil" )

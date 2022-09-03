@@ -7,6 +7,7 @@ if SERVER then
     AddCSLuaFile( "client/fields.lua" )
     AddCSLuaFile( "client/form.lua" )
     AddCSLuaFile( "client/forms.lua" )
+    AddCSLuaFile( "client/screenshot.lua" )
     include( "server/contact_forms.lua" )
 else
     include( "client/contact_forms.lua" )
