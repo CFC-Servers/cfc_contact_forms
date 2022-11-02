@@ -12,7 +12,7 @@ util.AddNetworkString( "CFC_ContactForms_Alert" )
 
 local logger = Logger( "CFC Contact Forms" )
 
-local realm = CreateConVar( "cfc_realm", "", FCVAR_ARCHIVE + FCVAR_PROTECTED, "The Realm Name" )
+local realm = CreateConVar( "cfc_realm", "unknown", FCVAR_REPLICATED + FCVAR_ARCHIVE, "The Realm Name" )
 local processorUrl = CreateConVar( "cfc_contact_forms_url", "", FCVAR_ARCHIVE + FCVAR_PROTECTED, "Form Processor URL" )
 local staffRanks = { moderator = true }
 
