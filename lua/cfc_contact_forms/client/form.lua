@@ -27,27 +27,20 @@ local Helpers = {
     end,
 
     ProcessImage = function( field )
-        print( "Sending image..." )
         local data = field:GetValue()
-        print( data )
         local dataSize = #data
-        print( "Image size: ", dataSize )
 
         local totalChunks = dataSize / MAX_CHUNK_SIZE
-        print( "Total Chunks: ", totalChunks )
         totalChunks = math.ceil( totalChunks )
 
         net.WriteUInt( totalChunks, 4 )
 
         local perChunk = math.ceil( dataSize / totalChunks )
-        print( "Per Chunk: ", perChunk )
         local thisChunk = string.sub( data, 1, math.min( perChunk, #data ) )
-        print( thisChunk )
-        print( "First chunk size: ", #thisChunk )
-        print( "First chunk from: ", 1, math.min( perChunk, #data ) )
 
-        net.WriteUInt( #thisChunk, 16 )
-        net.WriteData( thisChunk, #thisChunk )
+        -- net.WriteUInt( #thisChunk, 16 )
+        -- net.WriteData( thisChunk, #thisChunk )
+        net.WriteString( thisChunk )
 
         for i = 2, totalChunks do
             print( "Sending next chunk: ", i )

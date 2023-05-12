@@ -25,11 +25,10 @@ return function( submitForm )
         end
 
         local data = pending.data
-        local chunkSize = net.ReadUInt( 16 )
+        -- local chunkSize = net.ReadUInt( 16 )
 
-        local imageChunk = net.ReadData( chunkSize )
-        print( imageChunk )
-        print( "Received chunk size: ", chunkSize, #imageChunk )
+        -- local imageChunk = net.ReadData( chunkSize )
+        local imageChunk = net.ReadString()
 
         data.image = data.image .. imageChunk
 
@@ -42,7 +41,7 @@ return function( submitForm )
             print( data.image )
             print( "Final compressed size: ", #data.image )
 
-            data.image = util.Decompress( data.image )
+            -- data.image = util.Decompress( data.image )
             print( "Decompressed image data: ")
             print( data.image )
             assert( data.image ~= nil )
@@ -150,8 +149,9 @@ return function( submitForm )
         -- Including this one
         local chunkCount = net.ReadUInt( 4 )
 
-        local chunkSize = net.ReadUInt( 16 )
-        local imageChunk = net.ReadData( chunkSize )
+        -- local chunkSize = net.ReadUInt( 16 )
+        -- local imageChunk = net.ReadData( chunkSize )
+        local imageChunk = net.ReadString()
 
         local data = {}
         data.steam_id = ply:SteamID()
@@ -164,7 +164,7 @@ return function( submitForm )
 
         -- We have all of the image data, no followups
         if chunkCount == 1 then
-            data.image = util.Decompress( data.image )
+            -- data.image = util.Decompress( data.image )
             return submitForm( data, "player-report", ply )
         end
 
@@ -202,7 +202,7 @@ return function( submitForm )
 
         -- We have all of the image data, no followups
         if chunkCount == 1 then
-            data.image = util.Decompress( data.image )
+            -- data.image = util.Decompress( data.image )
             return submitForm( data, "staff-report", ply )
         end
 

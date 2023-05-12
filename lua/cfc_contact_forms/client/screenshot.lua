@@ -106,17 +106,18 @@ function Screenshot:Start( callback )
                 self.screenshotTriggered = true
 
                 hook.Add( "PostRender", hookName, function()
+                    hook.Remove( "PostRender", hookName )
                     local imageData = render.Capture({
                         format = "jpeg",
                         x = 0,
                         y = 0,
                         w = ScrW(),
                         h = ScrH(),
-                        quality = 1
+                        quality = 100
                     })
 
-                    imageData = util.Base64Encode( imageData )
-                    imageData = util.Compress( imageData )
+                    imageData = util.Base64Encode( imageData, true )
+                    -- imageData = util.Compress( imageData )
 
                     cb( imageData )
                 end )
