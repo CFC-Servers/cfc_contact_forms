@@ -8,12 +8,12 @@ end
 
 local Helpers = {
     FORM_TYPE_TO_NETSTRING = {
-        [ "contact" ] = "CFC_SubmitContactForm",
-        [ "feedback" ] = "CFC_SubmitFeedbackForm",
-        [ "bug-report" ] = "CFC_SubmitBugReport",
-        [ "player-report" ] = "CFC_SubmitPlayerReport",
-        [ "freeze-report" ] = "CFC_SubmitFreezeReport",
-        [ "staff-report" ] = "CFC_SubmitStaffReport"
+        ["contact"] = "CFC_SubmitContactForm",
+        ["feedback"] = "CFC_SubmitFeedbackForm",
+        ["bug-report"] = "CFC_SubmitBugReport",
+        ["player-report"] = "CFC_SubmitPlayerReport",
+        ["freeze-report"] = "CFC_SubmitFreezeReport",
+        ["staff-report"] = "CFC_SubmitStaffReport"
     },
 
     formImage = function( imageBase, shouldGrayscale )
@@ -28,12 +28,12 @@ local Helpers = {
         local netstring = self.FORM_TYPE_TO_NETSTRING[formType]
 
         net.Start( netstring )
-            for _, fieldStruct in pairs( fields ) do
-                local field = fieldStruct.field
+        for _, fieldStruct in pairs( fields ) do
+            local field = fieldStruct.field
 
-                print( "Sending '" .. fieldStruct.name .. "' to the server .. " )
-                net.WriteString( field:GetValue() )
-            end
+            print( "Sending '" .. fieldStruct.name .. "' to the server .. " )
+            net.WriteString( field:GetValue() )
+        end
         net.SendToServer()
     end,
 
@@ -144,7 +144,6 @@ return function( formData )
         timer.Remove( "CFC_FadeOutForm" )
         timer.Remove( "CFC_DelayCloseForm" )
     end
-    --
 
     Elements.Title( formData.title, Form )
 
@@ -199,3 +198,4 @@ return function( formData )
         end
     end
 end
+
