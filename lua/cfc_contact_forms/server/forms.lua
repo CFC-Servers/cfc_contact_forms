@@ -1,6 +1,7 @@
+local getDebugInformation = include( "cfc_contact_forms/server/info.lua" )
+
 return function( submitForm )
     local Forms = {}
-
 
     function Forms.Contact( _, ply )
         local contactMethod = net.ReadString()
