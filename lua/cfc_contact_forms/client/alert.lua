@@ -22,18 +22,20 @@ net.Receive( "CFC_ContactForms_Alert", function()
         reporterRankColor, reporterName,
         YELLOW, " has submitted a forms report on ",
         reportedRankColor, reportedName
-    ) -- message via chat
+    )
 
     LocalPlayer():PrintMessage( HUD_PRINTCENTER, reporterName .. " has submitted a forms report on " .. reportedName )
 
     chat.AddText(
         DARK_GRAY, "[", LIGHT_GRAY, "CFC Forms", DARK_GRAY, "] ",
-        Color( 206,206,206 ), string.Left( data.message, 99 ),
+        Color( 206, 206, 206 ), string.Left( data.message, 99 ),
         LIGHT_GRAY, "...\nFull message in console."
-    ) -- prints reporter's message
+    )
 
     local decor = "+" .. string.rep( "-", 80 )
-    local reportDataFields = { -- Each field is a two-index table since string keys have an unpredictable order
+
+    -- Each field is a two-index table since string keys have an unpredictable order
+    local reportDataFields = {
         { "Reporter", reporterName .. " (" .. data.steam_id .. ")" },
         { "Reported", reportedName .. " (" .. data.reported_steam_id .. ")" },
         { "Message", data.message }
