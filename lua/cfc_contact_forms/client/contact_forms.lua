@@ -1,7 +1,3 @@
-ProtectedCall( function()
-    require( "mixpanel" )
-end )
-
 CFCContactForms = {
     Frame = {},
 
@@ -39,9 +35,14 @@ surface.CreateFont( "CFCFormTitle", {
     size = 56
 } )
 
+surface.CreateFont( "CFCFormAlert", {
+    font = "Roboto",
+    size = 20
+} )
+
 CFCContactForms.openForms = function()
     local x = 400
-    local y = 585
+    local y = 585 + 75
 
     CFCContactForms.Frame = vgui.Create( "DFrame" )
     local Frame = CFCContactForms.Frame
@@ -61,20 +62,47 @@ CFCContactForms.openForms = function()
         draw.RoundedBox( 8, 0, 0, x, y, Color( 36, 41, 67, 255 ) )
     end
 
-    Pane = vgui.Create( "DPanel", Frame )
+    local Pane = vgui.Create( "DPanel", Frame )
     Pane:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
     Pane:DockPadding( 30, 15, 30, 0 )
     Pane:Dock( FILL )
     Pane:Center()
 
-    Elements.FormButton( "Contact", Forms.Contact, Pane )
+    local Alert = vgui.Create( "DPanel", Pane )
+    Alert:SetSize( x, 75 )
+    Alert.Paint = function( _, w, h )
+        surface.SetFont( "CFCFormAlert" )
+        surface.SetTextColor( 255, 255, 0 )
+        surface.SetTextPos( 0, 10 )
+        surface.DrawText( "Reports have been moved to our Discord:" )
+
+    end
+    Alert:Dock( TOP )
+
+    local DiscordLink = vgui.Create( "DLabel", Alert )
+    DiscordLink:SetSize( x, 20 )
+    DiscordLink:SetText( "discord.gg/cfcservers" )
+    DiscordLink:SetFont( "CFCFormAlert" )
+    DiscordLink:SetTextColor( Color( 0, 185, 185 ) )
+    DiscordLink:SetMouseInputEnabled( true )
+    DiscordLink:SizeToContents()
+
+    DiscordLink:SetCursor( "hand" )
+    DiscordLink:CenterVertical()
+    DiscordLink:CenterHorizontal(0.40)
+    DiscordLink.DoClick = function()
+        print( "Opening Discord" )
+        gui.OpenURL( "https://discord.gg/cfcservers" )
+    end
+
+    local disabled = true
+    Elements.FormButton( "Contact", Forms.Contact, Pane, disabled )
     Elements.FormButton( "Feedback", Forms.Feedback, Pane )
-    Elements.FormButton( "Bug Report", Forms.BugReport, Pane )
-    Elements.FormButton( "Player Report", Forms.PlayerReport, Pane )
+    Elements.FormButton( "Bug Report", Forms.BugReport, Pane, disabled )
+    Elements.FormButton( "Player Report", Forms.PlayerReport, Pane, disabled )
     Elements.FormButton( "Freeze Report", Forms.FreezeReport, Pane )
-    Elements.FormButton( "Staff Report", Forms.StaffReport, Pane )
+    Elements.FormButton( "Staff Report", Forms.StaffReport, Pane, disabled )
 end
-concommand.Add( "cfc_forms", CFCContactForms.openForms )
 
 function CFCContactForms:isOpenCommand( msg )
     if string.Explode( "", msg )[1] ~= "!" then return false end

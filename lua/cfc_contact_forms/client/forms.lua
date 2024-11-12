@@ -198,11 +198,17 @@ function Forms.FreezeReport()
     Form( formData )
 end
 
-concommand.Add( "cfc_forms_contact", Forms.Contact )
 concommand.Add( "cfc_forms_feedback", Forms.Feedback )
-concommand.Add( "cfc_forms_bugreport", Forms.BugReport )
-concommand.Add( "cfc_forms_playerreport", Forms.PlayerReport )
 concommand.Add( "cfc_forms_freezereport", Forms.FreezeReport )
-concommand.Add( "cfc_forms_staffreport", Forms.StaffReport )
+
+local function discordAlert()
+    surface.PlaySound( "buttons/button8.wav" )
+    chat.AddText( Color( 255, 255, 0 ), "Please join our discord to submit a report: discord.gg/cfcservers" )
+end
+
+concommand.Add( "cfc_forms_contact", discordAlert )
+concommand.Add( "cfc_forms_bugreport", discordAlert )
+concommand.Add( "cfc_forms_playerreport", discordAlert )
+concommand.Add( "cfc_forms_staffreport", discordAlert )
 
 return Forms

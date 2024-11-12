@@ -1,11 +1,6 @@
 local Elements = CFCContactForms.Elements
 local Fields = CFCContactForms.Fields
 
-local TrackEvent = function( ... )
-    if not Mixpanel then return end
-    Mixpanel:TrackEvent( ... )
-end
-
 local Helpers = {
     FORM_TYPE_TO_NETSTRING = {
         ["contact"] = "CFC_SubmitContactForm",
@@ -53,8 +48,6 @@ local Helpers = {
 
 
 return function( formData )
-    TrackEvent( "Player opened '" .. formData.formType .. "' form" )
-
     local Frame = CFCContactForms.Frame
     if IsValid( Frame ) then Frame:Close() end
 
@@ -88,32 +81,6 @@ return function( formData )
     -- Needed for the timers to fade the form out
     local Form = nil
     local fields = {}
-
-    local BackButton = vgui.Create( "DImageButton", FormContainer )
-    BackButton:SetSize( 32, 32 )
-
-    local backPosX = containerWidth * 0.02
-    local backPosY = containerHeight * 0.02
-    BackButton:SetPos( backPosX, backPosY )
-
-    BackButton:SetImage( Helpers.formImage( "back-button" ), "Back" )
-    BackButton.DoClick = function()
-        FormContainer:Close()
-        CFCContactForms.openForms()
-        timer.Remove( "CFC_FadeInForm" )
-        timer.Remove( "CFC_FadeOutForm" )
-        timer.Remove( "CFC_DelayCloseForm" )
-
-        local currentData = {}
-        for _, fieldStruct in pairs( fields ) do
-            currentData[fieldStruct.name] = fieldStruct.field:GetValue() or "<empty>"
-        end
-
-        TrackEvent(
-            "Player backed out of '" .. formData.formType .. "' form",
-            { currentData = currentData }
-        )
-    end
 
     Form = vgui.Create( "DScrollPanel", FormContainer )
     Form:SetBackgroundColor( Color( 36, 41, 67, 255 ) )
@@ -189,12 +156,9 @@ return function( formData )
 
             SubmitButton:SetText( "Sending..." )
             SubmitButton.DoClick = function() end
-            SubmitButton:SetDisabled( true )
-
-            TrackEvent( "Player submitted '" .. formData.formType .. "' form" )
+            SubmitButton:SetEnabled( false )
         else
             FormAlert:SetAlpha( 255 )
-            TrackEvent( "Player submitted invalid '" .. formData.formType .. "' form" )
         end
     end
 end

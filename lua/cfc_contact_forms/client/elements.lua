@@ -29,30 +29,38 @@ end
 -----------------------
 -- FormButton Element
 -----------------------
-function Elements.FormButton( text, callback, parent )
-    local Button = vgui.Create( "DButton", parent )
+do
+    local enabledColor = Color( 255, 255, 255, 255 )
+    local disabledColor = Color( 100, 100, 100, 255 )
+    function Elements.FormButton( text, callback, parent, disabled )
+        local Button = vgui.Create( "DButton", parent )
 
-    Button:SetFont( "Trebuchet24" )
-    Button:SetTextColor( Color( 255, 255, 255 ) )
-    Button:Dock( TOP )
-    Button:DockMargin( 0, 0, 0, 25 )
-    Button:SetText( text )
+        Button:SetFont( "Trebuchet24" )
+        Button:SetTextColor( disabled and disabledColor or enabledColor )
+        Button:Dock( TOP )
+        Button:DockMargin( 0, 0, 0, 25 )
+        Button:SetText( text )
 
-    local parentX = parent:GetSize()
-    local desiredSizeX = parentX * 0.8
+        local parentX = parent:GetSize()
+        local desiredSizeX = parentX * 0.8
 
-    Button:SetSize( desiredSizeX, 55 )
+        Button:SetSize( desiredSizeX, 55 )
 
-    Button.Paint = function( _, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, Color( 41, 128, 185, 0 ) )
+        Button.Paint = function( _, w, h )
+            if disabled then
+                surface.SetDrawColor( 100, 100, 100, 255 )
+            else
+                surface.SetDrawColor( 255, 255, 255, 255 )
+            end
+            surface.DrawOutlinedRect( 0, 0, w, h )
+        end
 
-        surface.SetDrawColor( 255, 255, 255, 255 )
-        surface.DrawOutlinedRect( 0, 0, w, h )
+        if not disabled then
+            Button.DoClick = callback
+        end
+
+        return Button
     end
-
-    Button.DoClick = callback
-
-    return Button
 end
 
 
