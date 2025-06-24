@@ -81,7 +81,7 @@ CFCContactForms.openForms = function()
 
     local DiscordLink = vgui.Create( "DLabel", Alert )
     DiscordLink:SetSize( x, 20 )
-    DiscordLink:SetText( "discord.gg/cfcservers" )
+    DiscordLink:SetText( "cfc.gg/discord" )
     DiscordLink:SetFont( "CFCFormAlert" )
     DiscordLink:SetTextColor( Color( 0, 185, 185 ) )
     DiscordLink:SetMouseInputEnabled( true )
@@ -92,7 +92,7 @@ CFCContactForms.openForms = function()
     DiscordLink:CenterHorizontal(0.40)
     DiscordLink.DoClick = function()
         print( "Opening Discord" )
-        gui.OpenURL( "https://discord.gg/cfcservers" )
+        gui.OpenURL( "https://cfc.gg/discord" )
     end
 
     local disabled = true
