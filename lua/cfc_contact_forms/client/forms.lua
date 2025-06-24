@@ -203,7 +203,7 @@ concommand.Add( "cfc_forms_freezereport", Forms.FreezeReport )
 
 local function discordAlert()
     surface.PlaySound( "buttons/button8.wav" )
-    chat.AddText( Color( 255, 255, 0 ), "Please join our discord to submit a report: discord.gg/cfcservers" )
+    chat.AddText( Color( 255, 255, 0 ), "Please join our discord to submit a report: cfc.gg/discord" )
 end
 
 concommand.Add( "cfc_forms_contact", discordAlert )
